@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/brand/goa_hindi.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HH Goa 2026 — Official Frame & Builder ID Generator</title>
+    <meta name="description" content="Generate your official Hacker House Goa 2026 PFP Frame and Builder ID Card in seconds. 100% client-side, instant download & 1-click share to X with #FrameInGoa." />
+    
+    <!-- Open Graph / Twitter Card -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="HH Goa 2026 — Frame & Builder ID Generator" />
+    <meta property="og:description" content="Frame your builder identity for Hacker House Goa 2026. 4 days. 247 builders. Heads down, ship or ship." />
+    <meta property="og:image" content="https://hhgoa.com/assets/Hacker%20house.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="HH Goa 2026 — Frame & Builder ID Generator" />
+    <meta name="twitter:description" content="Instant branded PFP frame & Builder ID card for Hacker House Goa 2026. #FrameInGoa" />
+    <meta name="twitter:image" content="https://hhgoa.com/assets/Hacker%20house.png" />
+  </head>
+  <body>
+    <!-- Top Header -->
+    <header class="header-container">
+      <div class="top-bar">
+        <div class="studio-tag">
+          <span>⚡</span> 2:47 PM STUDIO
+        </div>
+        <div class="event-dates-pill">
+          GOA, INDIA · 28 – 31 OCT 2026
+        </div>
+      </div>
+
+      <div class="hero-branding">
+        <h1 class="brand-title">HACKER HOUSE</h1>
+        <img src="/brand/goa_hindi.svg" alt="Goa Hindi Logo" class="hindi-logo-img" />
+      </div>
+
+      <p class="hero-subtitle">
+        Mint your official <strong>Hacker House Goa 2026</strong> identity. Upload any photo — instantly get a high-res PFP frame or Builder ID card ready to share on 𝕏.
+      </p>
+
+      <div class="hero-tags">
+        <span class="hero-tag">✦ 247 BUILDERS RESIDENCY</span>
+        <span class="hero-tag">✦ ZERO LATENCY CLIENT-SIDE</span>
+        <span class="hero-tag">✦ #FrameInGoa</span>
+      </div>
+    </header>
+
+    <!-- Format Tabs -->
+    <div class="tabs-wrapper">
+      <div class="format-tabs" role="tablist">
+        <button id="tabFormatA" class="tab-btn active" role="tab" aria-selected="true">
+          <span>🖼️</span> Format A: PFP Frame / Overlay
+        </button>
+        <button id="tabFormatB" class="tab-btn" role="tab" aria-selected="false">
+          <span>🪪</span> Format B: Builder ID Card
+        </button>
+      </div>
+    </div>
+
+    <!-- Main Workspace -->
+    <main class="app-container">
+      <!-- Left Column: Controls & Inputs -->
+      <section class="brutal-card controls-card">
+        <div class="pushpin pushpin-left"></div>
+        <div class="pushpin pushpin-right"></div>
+
+        <h2 id="sectionTitle" class="card-title">Upload Photo</h2>
+        <p class="card-desc">JPG, PNG, WebP, or iPhone HEIC — no manual cropping needed.</p>
+
+        <!-- Dropzone -->
+        <div id="dropzone" class="dropzone">
+          <input type="file" id="fileInput" class="hidden-file-input" accept="image/*,.heic,.heif" />
+          <span class="dropzone-icon">📸</span>
+          <div class="dropzone-text">Click to choose or drag & drop photo</div>
+          <div class="dropzone-sub">Supports iPhone HEIC, portrait, landscape, & square</div>
+        </div>
+
+        <!-- Sample Avatars -->
+        <div class="sample-avatars">
+          <span class="sample-label">Or try sample:</span>
+          <button id="btnSample1" class="sample-btn" type="button">🏖️ Retro Hacker</button>
+          <button id="btnSample2" class="sample-btn" type="button">🌴 Goa Sunset</button>
+        </div>
+
+        <!-- Image Adjustments (Zoom / Pan / Rotate) -->
+        <div class="adjust-section">
+          <div class="section-label">
+            <span>Photo Adjustments</span>
+            <button id="btnResetTransform" class="btn-mini" type="button" title="Reset adjustments">↺ Reset</button>
+          </div>
+
+          <div class="control-row">
+            <label class="control-label" for="zoomSlider">Zoom</label>
+            <input type="range" id="zoomSlider" class="slider-input" min="0.5" max="3" step="0.05" value="1" />
+            <button id="btnRotate" class="btn-mini" type="button" title="Rotate 90 degrees">↷ 90°</button>
+          </div>
+        </div>
+
+        <!-- FORMAT A SPECIFIC OPTIONS -->
+        <div id="formatAOptions" class="options-group">
+          <div class="section-label">Frame Style</div>
+          <div class="pills-selector" id="frameStyleSelector">
+            <button class="pill-option active" data-style="classic" type="button">🌴 Goa Classic</button>
+            <button class="pill-option" data-style="sunset" type="button">🌅 Tropical Sunset</button>
+            <button class="pill-option" data-style="terminal" type="button">💻 Hacker Terminal</button>
+            <button class="pill-option" data-style="sticker" type="button">🏷️ Retro Sticker</button>
+          </div>
+
+          <div class="section-label">Cutout Shape</div>
+          <div class="pills-selector" id="frameShapeSelector">
+            <button class="pill-option active" data-shape="circle" type="button">⭕ Circle (X Avatar)</button>
+            <button class="pill-option" data-shape="square" type="button">⬛ Rounded Square</button>
+          </div>
+        </div>
+
+        <!-- FORMAT B SPECIFIC OPTIONS (Builder ID Card) -->
+        <div id="formatBOptions" class="options-group" style="display: none;">
+          <div class="input-field-group">
+            <label class="input-label" for="inputName">Builder Name</label>
+            <input type="text" id="inputName" class="text-input" placeholder="John Doe" value="" maxlength="30" />
+          </div>
+
+          <div class="input-field-group">
+            <label class="input-label" for="inputRole">Primary Stack / Role</label>
+            <input type="text" id="inputRole" class="text-input" placeholder="AI Research & Web3" value="" maxlength="35" />
+            <div class="role-chips" id="roleChipsContainer">
+              <!-- Preset chips populated via JS -->
+            </div>
+          </div>
+
+          <div class="input-field-group">
+            <label class="input-label" for="inputTitle">Generated Builder Title</label>
+            <div class="input-with-action">
+              <input type="text" id="inputTitle" class="text-input" value="Autonomous Alchemist" readonly />
+              <button id="btnRerollTitle" class="action-btn" type="button" title="Generate a new title">
+                <span>🎲</span> Re-Roll
+              </button>
+            </div>
+          </div>
+
+          <div class="section-label">Card Theme</div>
+          <div class="pills-selector" id="cardThemeSelector">
+            <button class="pill-option active" data-theme="emerald" type="button">🌿 Emerald Goa</button>
+            <button class="pill-option" data-theme="sunset" type="button">🌺 Sunset Pink</button>
+            <button class="pill-option" data-theme="midnight" type="button">🌙 Midnight Beach</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Right Column: Live Preview & Actions -->
+      <section class="brutal-card preview-card">
+        <div class="pushpin pushpin-left"></div>
+        <div class="pushpin pushpin-right"></div>
+
+        <h2 class="card-title">Live Preview</h2>
+        <p class="card-desc">Drag canvas to pan · High-res 1080p output</p>
+
+        <!-- Canvas Container -->
+        <div class="canvas-wrapper" id="canvasWrapper">
+          <canvas id="renderCanvas" width="1080" height="1080"></canvas>
+          <div class="drag-hint">🖐️ Drag photo to reposition</div>
+        </div>
+
+        <!-- Action CTAs -->
+        <div class="actions-container">
+          <button id="btnDownload" class="btn-primary" type="button">
+            <span>📥</span> Download High-Res PNG
+          </button>
+          <div class="btn-group-secondary">
+            <button id="btnShareX" class="btn-secondary" type="button">
+              <span>𝕏</span> Share to 𝕏 (#FrameInGoa)
+            </button>
+            <button id="btnCopyClipboard" class="btn-outline" type="button">
+              <span>📋</span> Copy Image
+            </button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Notice Board Section -->
+    <section class="notice-section">
+      <div class="notice-header">
+        <div class="notice-tag">✦ PINNED UP ✦</div>
+        <h3 class="notice-title">Notice Board</h3>
+      </div>
+
+      <div class="notice-grid">
+        <div class="pinned-note">
+          <div class="note-pin" style="background: var(--accent-pink);"></div>
+          <h4>Task #1 Submission</h4>
+          <p>Generate your official HH Goa 2026 framed photo or Builder ID card. Post it on X with your build vision and tag <strong>#FrameInGoa</strong> to get featured in the Radar.</p>
+        </div>
+
+        <div class="pinned-note">
+          <div class="note-pin" style="background: var(--accent-yellow);"></div>
+          <h4>Zero Latency & Privacy</h4>
+          <p>Everything runs 100% inside your browser using HTML5 Canvas. Your photos never leave your device, with instant HEIC support from iOS.</p>
+        </div>
+
+        <div class="pinned-note">
+          <div class="note-pin" style="background: var(--accent-green-neon);"></div>
+          <h4>The Event Details</h4>
+          <p><strong>Hacker House Goa 2026</strong><br>
+          Oct 28 – 31, 2026 · Goa, India<br>
+          247 elite builders. Heads down, ship or ship.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer-container">
+      <div class="footer-links">
+        <a href="https://hhgoa.com" target="_blank" class="footer-link">Official Site (hhgoa.com)</a>
+        <a href="https://hacker-house-goa-2026.devfolio.co/" target="_blank" class="footer-link">Devfolio Application</a>
+        <a href="https://x.com/247pmstudio" target="_blank" class="footer-link">@247pmstudio</a>
+        <a href="https://t.me/twofourtysevenpm" target="_blank" class="footer-link">Telegram Community</a>
+      </div>
+      <p class="footer-copy">© 2026 HH-Goa · 2:47 PM Studio. All rights reserved.</p>
+    </footer>
+
+    <!-- Toast Notifications Container -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
