@@ -444,6 +444,12 @@ async function init() {
     requestRender();
   });
 
+  // Format B: Builder Title (Editable by user)
+  inputTitle.addEventListener('input', (e) => {
+    state.cardData.title = e.target.value;
+    requestRender();
+  });
+
   // Format B: Re-roll Title
   btnRerollTitle.addEventListener('click', () => {
     const newTitle = generateRandomTitle();
