@@ -121,18 +121,13 @@ export async function shareToX(canvas, formatType = 'pfp', notify = () => {}, ca
     // MOBILE BEHAVIOR: Launch X app with prefilled caption, fallback to browser
     // ----------------------------------------------------
     
-    // 1. Copy image to clipboard & download image so mobile user has graphic ready
+    // Copy image to clipboard so mobile user can paste graphic
     const copied = await copyCanvasToClipboard(canvas);
-    try {
-      await downloadCanvasImage(canvas, filename);
-    } catch (e) {
-      console.warn('Auto-download failed on mobile:', e);
-    }
 
     if (copied) {
-      notify('Opening 𝕏! Image copied to clipboard & saved to Photos.', 'success');
+      notify('Opening 𝕏! Image copied to clipboard.', 'success');
     } else {
-      notify('Opening 𝕏! Image saved to Photos — attach to your tweet.', 'success');
+      notify('Opening 𝕏!', 'info');
     }
 
     if (isAndroid()) {
@@ -179,19 +174,14 @@ export async function shareToX(canvas, formatType = 'pfp', notify = () => {}, ca
   // ------------------------------------------------------
   // DESKTOP BEHAVIOR:
   // Do NOT trigger navigator.share (which opens Windows Share sheet).
-  // Directly copy to clipboard, download PNG, and open x.com tweet composer.
+  // Directly copy to clipboard and open x.com tweet composer.
   // ------------------------------------------------------
   const copied = await copyCanvasToClipboard(canvas);
-  try {
-    await downloadCanvasImage(canvas, filename);
-  } catch (e) {
-    console.warn('Desktop auto-download failed:', e);
-  }
 
   if (copied) {
-    notify('Image copied & downloaded! Paste (Ctrl+V) into your tweet on 𝕏.', 'success');
+    notify('Opening 𝕏! Image copied — paste (Ctrl+V) into your tweet.', 'success');
   } else {
-    notify('Image downloaded! Attach it to your tweet on 𝕏.', 'info');
+    notify('Opening 𝕏!', 'info');
   }
 
   // Open X Web Intent in a new tab/window
