@@ -122,24 +122,29 @@ export async function shareToX(canvas, formatType = 'pfp', notify = () => {}, ca
     : 'hh-goa-2026-builder-id.png';
 
   let tweetCaption;
+  const appUrl = 'https://hhgoa.navneetkhar24.workers.dev/';
+
   if (formatType === 'pfp') {
-    tweetCaption = `Framed my official PFP for Hacker House Goa 2026 🌊⚡\n\n4 days of pure building on the Goa sand.\n\n#FrameInGoa @HackerHouseGoa @247pmstudio`;
+    tweetCaption = `Framed my official PFP for Hacker House Goa 2026 🌊⚡\n\n4 days of pure building on the Goa sand.\n\n#FrameInGoa @HackerHouseGoa @247pmstudio\n\nCreate your own frame here:\n${appUrl}`;
   } else {
     const name = cardData?.name ? cardData.name.trim() : '';
-    const role = cardData?.role ? cardData.role.trim() : (cardData?.title || '');
-    const metaLine = name && role 
-      ? `${name} · ${role} — Heads down. Ship or ship.`
-      : name 
-      ? `${name} — Heads down. Ship or ship.`
-      : role 
-      ? `${role} — Heads down. Ship or ship.`
-      : `Heads down. Ship or ship.`;
+    const title = cardData?.title ? cardData.title.trim() : '';
 
-    tweetCaption = `Minted my official Builder ID for Hacker House Goa 2026! 🌴⚡\n\n${metaLine}\n\n#FrameInGoa @HackerHouseGoa @247pmstudio`;
+    let metaLine = '';
+    if (name && title) {
+      metaLine = `Builder: ${name}\nTitle & Class: ${title} — Heads down. Ship or ship.`;
+    } else if (name) {
+      metaLine = `Builder: ${name} — Heads down. Ship or ship.`;
+    } else if (title) {
+      metaLine = `Title & Class: ${title} — Heads down. Ship or ship.`;
+    } else {
+      metaLine = `Heads down. Ship or ship.`;
+    }
+
+    tweetCaption = `Minted my official Builder ID for Hacker House Goa 2026! 🌴⚡\n\n${metaLine}\n\n#FrameInGoa @HackerHouseGoa @247pmstudio\n\nCreate your own builder badge here:\n${appUrl}`;
   }
 
-  const tweetUrl = 'https://hhgoa.com';
-  const fullTweetText = `${tweetCaption}\n\n${tweetUrl}`;
+  const fullTweetText = tweetCaption;
 
   // Standard Web Intent URL for 𝕏 (passes full text with link and hashtags in text param)
   const webIntentUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(fullTweetText)}`;
