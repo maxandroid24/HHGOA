@@ -74,12 +74,12 @@ function getActiveCutoutBounds() {
     };
   } else {
     return {
-      x: 85,
-      y: 241,
+      x: 80,
+      y: 230,
       width: 430,
       height: 430,
-      cx: 300,
-      cy: 456,
+      cx: 295,
+      cy: 445,
       radius: 215,
       shape: 'square'
     };

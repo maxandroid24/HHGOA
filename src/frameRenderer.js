@@ -445,7 +445,7 @@ export async function renderBuilderCard(canvas, userImg, data = {}, options = {}
   }
 
   // 2. Main Badge Card Container (Balanced full-height container)
-  const cardMargin = 40;
+  const cardMargin = 35;
   const cardW = width - cardMargin * 2;
   const cardH = height - cardMargin * 2;
   const cardX = cardMargin;
@@ -488,7 +488,7 @@ export async function renderBuilderCard(canvas, userImg, data = {}, options = {}
   });
 
   // 3. CARD HEADER BAR
-  const headerY = cardY + 28;
+  const headerY = cardY + 26;
 
   ctx.save();
   ctx.fillStyle = (theme === 'midnight') ? accentYellow : '#0b6839';
@@ -504,14 +504,14 @@ export async function renderBuilderCard(canvas, userImg, data = {}, options = {}
   ctx.lineWidth = 2;
   ctx.setLineDash([8, 6]);
   ctx.beginPath();
-  ctx.moveTo(cardX + 45, headerY + 42);
-  ctx.lineTo(cardX + cardW - 45, headerY + 42);
+  ctx.moveTo(cardX + 45, headerY + 40);
+  ctx.lineTo(cardX + cardW - 45, headerY + 40);
   ctx.stroke();
   ctx.setLineDash([]);
   ctx.restore();
 
   // 4. BIG LOGO HEADER ("HACKER HOUSE" + "गोवा")
-  const logoY = headerY + 58;
+  const logoY = headerY + 54;
   if (assets.hackerHouse) {
     const hhW = 420;
     const hhH = 92;
@@ -578,14 +578,16 @@ export async function renderBuilderCard(canvas, userImg, data = {}, options = {}
   ctx.roundRect(photoBoxX + 6, photoBoxY + 6, photoBoxW - 12, photoBoxH - 12, 20);
   ctx.clip();
 
-  ctx.fillStyle = '#fffbe8';
-  ctx.fillRect(photoBoxX, photoBoxY, photoBoxW, photoBoxH);
+  // Background for transparent avatars
+  ctx.fillStyle = '#f5eed2';
+  ctx.fillRect(photoBoxX + 6, photoBoxY + 6, photoBoxW - 12, photoBoxH - 12);
 
+  // Render User Photo with clamped pan
   drawUserPhoto(ctx, userImg, photoBoxX + 6, photoBoxY + 6, photoBoxW - 12, photoBoxH - 12, transform);
   ctx.restore();
 
-  // Status tag on photo bottom
-  const statusTagW = 270;
+  // Verified Badge pill at bottom of photo
+  const statusTagW = 220;
   const statusTagH = 40;
   const statusTagX = photoBoxX + (photoBoxW - statusTagW) / 2;
   const statusTagY = photoBoxY + photoBoxH - 24;
@@ -693,10 +695,10 @@ export async function renderBuilderCard(canvas, userImg, data = {}, options = {}
   ctx.restore();
 
   // 7. MIDDLE HIGHLIGHT BANNER: "HEADS DOWN. SHIP OR SHIP."
-  const midBannerY = photoBoxY + photoBoxH + 45;
+  const midBannerY = photoBoxY + photoBoxH + 35;
   const midBannerW = cardW - 90;
   const midBannerX = cardX + 45;
-  const midBannerH = 75;
+  const midBannerH = 80;
 
   ctx.save();
   ctx.fillStyle = '#0b6839';
@@ -710,14 +712,14 @@ export async function renderBuilderCard(canvas, userImg, data = {}, options = {}
   ctx.fillStyle = '#fee101';
   ctx.font = '800 24px "Victor Mono", monospace';
   ctx.textAlign = 'center';
-  ctx.fillText('⚡ LESS NOISE. MORE SIGNAL · HEADS DOWN. SHIP OR SHIP ⚡', width / 2, midBannerY + 46);
+  ctx.fillText('⚡ LESS NOISE. MORE SIGNAL · HEADS DOWN. SHIP OR SHIP ⚡', width / 2, midBannerY + 49);
   ctx.restore();
 
-  // 8. EXPANDED BOTTOM AUTHENTICITY PASS & SECURITY SECTION (Zero dead space)
-  const passY = midBannerY + midBannerH + 30;
+  // 8. EXPANDED BOTTOM AUTHENTICITY PASS & SECURITY SECTION (Fills bottom height cleanly)
+  const passY = midBannerY + midBannerH + 25;
   const passW = cardW - 90;
   const passX = cardX + 45;
-  const passH = 210;
+  const passH = 265;
 
   ctx.save();
   ctx.fillStyle = (theme === 'midnight') ? 'rgba(255,255,255,0.04)' : '#f2ecd0';
@@ -729,10 +731,10 @@ export async function renderBuilderCard(canvas, userImg, data = {}, options = {}
   ctx.stroke();
 
   // Barcode on left
-  const barcodeX = passX + 30;
-  const barcodeY = passY + 28;
+  const barcodeX = passX + 35;
+  const barcodeY = passY + 32;
   const barcodeW = 280;
-  const barcodeH = 80;
+  const barcodeH = 105;
 
   ctx.fillStyle = (theme === 'midnight') ? '#fee101' : '#0b6839';
   let curX = barcodeX;
@@ -742,22 +744,22 @@ export async function renderBuilderCard(canvas, userImg, data = {}, options = {}
     curX += barW + 4;
   });
 
-  ctx.font = '700 15px "Victor Mono", monospace';
+  ctx.font = '700 16px "Victor Mono", monospace';
   ctx.textAlign = 'left';
-  ctx.fillText('AUTH: SHA-256//HHG-PASS-2026', barcodeX, barcodeY + barcodeH + 26);
-  ctx.font = '500 13px "Victor Mono", monospace';
+  ctx.fillText('AUTH: SHA-256//HHG-PASS-2026', barcodeX, barcodeY + barcodeH + 32);
+  ctx.font = '500 14px "Victor Mono", monospace';
   ctx.fillStyle = textDark;
-  ctx.fillText('VERIFY: DEVFL.IO/HHGOA26', barcodeX, barcodeY + barcodeH + 52);
+  ctx.fillText('VERIFY: DEVFL.IO/HHGOA26', barcodeX, barcodeY + barcodeH + 60);
 
   // Simulated QR Code in center
-  const qrX = passX + 340;
-  const qrY = passY + 28;
-  const qrSize = 105;
+  const qrX = passX + 345;
+  const qrY = passY + 32;
+  const qrSize = 130;
   drawSimulatedQR(ctx, qrX, qrY, qrSize, (theme === 'midnight') ? '#fee101' : '#0b6839');
 
-  ctx.font = '600 12px "Victor Mono", monospace';
+  ctx.font = '700 13px "Victor Mono", monospace';
   ctx.textAlign = 'center';
-  ctx.fillText('SCAN BADGE', qrX + qrSize / 2, qrY + qrSize + 22);
+  ctx.fillText('SCAN BADGE', qrX + qrSize / 2, qrY + qrSize + 25);
 
   // Right side badges: #FrameInGoa & Devfolio
   const tagColX = passX + passW - 390;
@@ -765,29 +767,30 @@ export async function renderBuilderCard(canvas, userImg, data = {}, options = {}
   // #FrameInGoa badge
   ctx.fillStyle = accentPink;
   ctx.beginPath();
-  ctx.roundRect(tagColX, passY + 25, 360, 52, 26);
+  ctx.roundRect(tagColX, passY + 30, 360, 58, 29);
   ctx.fill();
 
   ctx.fillStyle = '#ffffff';
-  ctx.font = '800 24px "Victor Mono", monospace';
+  ctx.font = '800 26px "Victor Mono", monospace';
   ctx.textAlign = 'center';
-  ctx.fillText('#FrameInGoa', tagColX + 180, passY + 60);
+  ctx.fillText('#FrameInGoa', tagColX + 180, passY + 68);
 
   // Link & Rights info
   ctx.fillStyle = textDark;
-  ctx.font = '700 17px "Victor Mono", monospace';
-  ctx.fillText('HHGOA.COM · HACKER HOUSE', tagColX + 180, passY + 115);
+  ctx.font = '700 18px "Victor Mono", monospace';
+  ctx.fillText('HHGOA.COM · HACKER HOUSE', tagColX + 180, passY + 130);
+  ctx.font = '600 16px "Victor Mono", monospace';
+  ctx.fillText('GOA, INDIA · 28 – 31 OCT 2026', tagColX + 180, passY + 165);
   ctx.font = '600 15px "Victor Mono", monospace';
-  ctx.fillText('GOA, INDIA · 28 – 31 OCT 2026', tagColX + 180, passY + 144);
-  ctx.fillText('OFFICIAL RESIDENCY IDENTITY', tagColX + 180, passY + 172);
+  ctx.fillText('OFFICIAL RESIDENCY IDENTITY', tagColX + 180, passY + 198);
 
   ctx.restore();
 
   // 9. BOTTOM RESIDENCY PLEDGE BAR (Fills the base of the card cleanly)
-  const pledgeY = passY + passH + 20;
+  const pledgeY = passY + passH + 22;
   const pledgeW = cardW - 90;
   const pledgeX = cardX + 45;
-  const pledgeH = 64;
+  const pledgeH = 75;
 
   ctx.save();
   ctx.fillStyle = (theme === 'midnight') ? '#081d11' : '#0b6839';
@@ -799,8 +802,8 @@ export async function renderBuilderCard(canvas, userImg, data = {}, options = {}
   ctx.stroke();
 
   ctx.fillStyle = accentYellow;
-  ctx.font = '800 18px "Victor Mono", monospace';
+  ctx.font = '800 19px "Victor Mono", monospace';
   ctx.textAlign = 'center';
-  ctx.fillText('✦ RESIDENCY ACCESS TIER-1 · OCEAN-FRONT HACK STATION · 2026 ✦', width / 2, pledgeY + 40);
+  ctx.fillText('✦ RESIDENCY ACCESS TIER-1 · OCEAN-FRONT HACK STATION · 2026 ✦', width / 2, pledgeY + 46);
   ctx.restore();
 }
