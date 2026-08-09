@@ -1,6 +1,35 @@
 // Social Share and Download utilities for HH Goa 2026
 
 /**
+ * Check if current client is a mobile device (phone / tablet / iPad)
+ * @returns {boolean}
+ */
+export function isMobileDevice() {
+  const ua = (navigator.userAgent || navigator.vendor || window.opera || '').toLowerCase();
+  const isMobileUA = /android|iphone|ipad|ipod|blackberry|iemobile|opera mini|mobile/i.test(ua);
+  const isTouchMac = navigator.maxTouchPoints > 1 && /macintosh/i.test(ua); // iPadOS Safari
+  return isMobileUA || isTouchMac;
+}
+
+/**
+ * Check if current client is Android
+ * @returns {boolean}
+ */
+export function isAndroid() {
+  return /android/i.test((navigator.userAgent || '').toLowerCase());
+}
+
+/**
+ * Check if current client is iOS / iPadOS
+ * @returns {boolean}
+ */
+export function isIOS() {
+  const ua = (navigator.userAgent || '').toLowerCase();
+  const isTouchMac = navigator.maxTouchPoints > 1 && /macintosh/i.test(ua);
+  return /iphone|ipad|ipod/i.test(ua) || isTouchMac;
+}
+
+/**
  * Download canvas as high-res PNG
  * @param {HTMLCanvasElement} canvas
  * @param {string} filename
@@ -49,63 +78,100 @@ export async function copyCanvasToClipboard(canvas) {
 
 /**
  * Share graphic to X (Twitter)
- * Uses Web Share API (mobile with image file attachment) or Web Intent URL fallback
+ * - Desktop: Copies image to clipboard + downloads PNG + redirects to x.com/intent/tweet with prefilled caption & link
+ * - Mobile: Launches X App via Deep Link/Intent with fallback to mobile browser x.com web intent + downloads PNG
+ *
  * @param {HTMLCanvasElement} canvas
  * @param {string} formatType 'pfp' | 'card'
  * @param {(msg: string, type?: 'info'|'success'|'warn') => void} notify
+ * @param {object} [cardData]
  */
-export async function shareToX(canvas, formatType = 'pfp', notify = () => {}) {
+export async function shareToX(canvas, formatType = 'pfp', notify = () => {}, cardData = {}) {
   const filename = formatType === 'pfp' 
     ? 'hh-goa-2026-pfp-frame.png' 
     : 'hh-goa-2026-builder-id.png';
 
-  const tweetCaption = formatType === 'pfp'
-    ? `Framed my official PFP for Hacker House Goa 2026 🌊⚡\n\n4 days of pure building on the Goa sand.\n\n#FrameInGoa @HackerHouseGoa @247pmstudio`
-    : `Minted my official Builder ID for Hacker House Goa 2026! 🌴⚡\n\nHeads down. Ship or ship.\n\n#FrameInGoa @HackerHouseGoa @247pmstudio`;
+  let tweetCaption;
+  if (formatType === 'pfp') {
+    tweetCaption = `Framed my official PFP for Hacker House Goa 2026 🌊⚡\n\n4 days of pure building on the Goa sand.\n\n#FrameInGoa @HackerHouseGoa @247pmstudio`;
+  } else {
+    const name = cardData?.name ? cardData.name.trim() : '';
+    const role = cardData?.role ? cardData.role.trim() : (cardData?.title || '');
+    const metaLine = name && role 
+      ? `${name} · ${role} — Heads down. Ship or ship.`
+      : name 
+      ? `${name} — Heads down. Ship or ship.`
+      : role 
+      ? `${role} — Heads down. Ship or ship.`
+      : `Heads down. Ship or ship.`;
+
+    tweetCaption = `Minted my official Builder ID for Hacker House Goa 2026! 🌴⚡\n\n${metaLine}\n\n#FrameInGoa @HackerHouseGoa @247pmstudio`;
+  }
 
   const tweetUrl = 'https://hhgoa.com';
+  const fullTweetText = `${tweetCaption}\n\n${tweetUrl}`;
 
-  // 1. Try Web Share API (Native mobile share sheet with image file)
-  if (navigator.share && navigator.canShare) {
+  // Standard Web Intent URL for 𝕏
+  const webIntentUrl = `https://x.com/intent/tweet?text=${encodeURIComponent(tweetCaption)}&url=${encodeURIComponent(tweetUrl)}`;
+
+  const mobile = isMobileDevice();
+
+  if (mobile) {
+    // ----------------------------------------------------
+    // MOBILE BEHAVIOR: Redirect to X app if available, else X website
+    // ----------------------------------------------------
+    
+    // 1. Download image & copy to clipboard so mobile user has graphic ready
     try {
-      const blob = await new Promise(res => canvas.toBlob(res, 'image/png'));
-      const file = new File([blob], filename, { type: 'image/png' });
-      
-      if (navigator.canShare({ files: [file] })) {
-        await navigator.share({
-          title: 'Hacker House Goa 2026',
-          text: `${tweetCaption}\n\n${tweetUrl}`,
-          files: [file]
-        });
-        notify('Shared successfully!', 'success');
-        return;
-      }
-    } catch (err) {
-      if (err.name !== 'AbortError') {
-        console.warn('Web share failed, falling back to intent:', err);
-      } else {
-        return; // User canceled share sheet
-      }
+      await downloadCanvasImage(canvas, filename);
+    } catch (e) {
+      console.warn('Auto-download failed on mobile:', e);
     }
+    await copyCanvasToClipboard(canvas);
+
+    notify('Opening 𝕏! Image saved — attach it to your tweet.', 'success');
+
+    if (isAndroid()) {
+      // Android Chrome Intent syntax:
+      // Attempts to launch the official X (Twitter) Android app to the compose screen.
+      // If not installed, automatically falls back to browser_fallback_url (x.com intent).
+      const androidIntentUrl = `intent://post?message=${encodeURIComponent(fullTweetText)}#Intent;package=com.twitter.android;scheme=twitter;S.browser_fallback_url=${encodeURIComponent(webIntentUrl)};end`;
+      window.location.href = androidIntentUrl;
+      return;
+    }
+
+    if (isIOS()) {
+      // iOS Universal Link: https://x.com/intent/tweet
+      // When opened in Safari / iOS browsers, iOS opens the native X app if installed,
+      // or opens the web page on x.com in Safari if not installed without showing invalid address errors.
+      window.location.href = webIntentUrl;
+      return;
+    }
+
+    // Generic mobile fallback
+    window.location.href = webIntentUrl;
+    return;
   }
 
-  // 2. Fallback: Copy image to clipboard + Download + Open Twitter Intent
+  // ------------------------------------------------------
+  // DESKTOP BEHAVIOR:
+  // Do NOT trigger navigator.share (which opens Windows Share sheet).
+  // Directly copy to clipboard, download PNG, and open x.com tweet composer.
+  // ------------------------------------------------------
   const copied = await copyCanvasToClipboard(canvas);
-  await downloadCanvasImage(canvas, filename);
+  try {
+    await downloadCanvasImage(canvas, filename);
+  } catch (e) {
+    console.warn('Desktop auto-download failed:', e);
+  }
 
   if (copied) {
-    notify('Image copied to clipboard & downloaded! Paste (Ctrl+V) into your tweet.', 'success');
+    notify('Image copied & downloaded! Paste (Ctrl+V) into your tweet on 𝕏.', 'success');
   } else {
-    notify('Image downloaded! Attach it to your tweet.', 'info');
+    notify('Image downloaded! Attach it to your tweet on 𝕏.', 'info');
   }
 
-  // Construct Twitter Intent URL with prefilled text & hashtags
-  const intentParams = new URLSearchParams({
-    text: tweetCaption,
-    url: tweetUrl,
-    hashtags: 'FrameInGoa'
-  });
-
-  const intentUrl = `https://twitter.com/intent/tweet?${intentParams.toString()}`;
-  window.open(intentUrl, '_blank', 'width=620,height=550,noopener,noreferrer');
+  // Open X Web Intent in a new tab/window
+  window.open(webIntentUrl, '_blank', 'noopener,noreferrer');
 }
+

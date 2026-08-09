@@ -372,7 +372,7 @@ async function init() {
   });
 
   btnShareX.addEventListener('click', () => {
-    shareToX(canvas, state.currentFormat, (msg, type) => showToast(msg, type));
+    shareToX(canvas, state.currentFormat, (msg, type) => showToast(msg, type), state.cardData);
   });
 
   btnCopyClipboard.addEventListener('click', async () => {
