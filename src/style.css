@@ -681,19 +681,25 @@ body {
 
 .drag-hint {
   position: absolute;
-  bottom: 10px;
+  bottom: 26px;
   left: 50%;
   transform: translateX(-50%);
-  background: rgba(0, 0, 0, 0.75);
+  background: rgba(11, 38, 23, 0.92);
   color: var(--accent-yellow);
+  font-family: var(--font-mono);
   font-size: 11px;
   font-weight: 700;
-  padding: 4px 12px;
+  padding: 5px 14px;
   border-radius: 999px;
+  border: 1px solid rgba(254, 225, 1, 0.4);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
   pointer-events: none;
-  opacity: 0.85;
+  opacity: 0.95;
   display: inline-flex;
   align-items: center;
+  gap: 6px;
+  backdrop-filter: blur(4px);
+  z-index: 5;
 }
 
 /* -------------------------------------------------------------

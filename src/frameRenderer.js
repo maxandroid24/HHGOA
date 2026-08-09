@@ -695,7 +695,7 @@ export async function renderBuilderCard(canvas, userImg, data = {}, options = {}
   ctx.restore();
 
   // 7. MIDDLE HIGHLIGHT BANNER: "HEADS DOWN. SHIP OR SHIP."
-  const midBannerY = photoBoxY + photoBoxH + 35;
+  const midBannerY = photoBoxY + photoBoxH + 30;
   const midBannerW = cardW - 90;
   const midBannerX = cardX + 45;
   const midBannerH = 80;
@@ -715,11 +715,11 @@ export async function renderBuilderCard(canvas, userImg, data = {}, options = {}
   ctx.fillText('⚡ LESS NOISE. MORE SIGNAL · HEADS DOWN. SHIP OR SHIP ⚡', width / 2, midBannerY + 49);
   ctx.restore();
 
-  // 8. EXPANDED BOTTOM AUTHENTICITY PASS & SECURITY SECTION (Fills bottom height cleanly)
+  // 8. EXPANDED BOTTOM AUTHENTICITY PASS & SECURITY SECTION
   const passY = midBannerY + midBannerH + 25;
   const passW = cardW - 90;
   const passX = cardX + 45;
-  const passH = 265;
+  const passH = 345;
 
   ctx.save();
   ctx.fillStyle = (theme === 'midnight') ? 'rgba(255,255,255,0.04)' : '#f2ecd0';
@@ -732,9 +732,9 @@ export async function renderBuilderCard(canvas, userImg, data = {}, options = {}
 
   // Barcode on left
   const barcodeX = passX + 35;
-  const barcodeY = passY + 32;
+  const barcodeY = passY + 36;
   const barcodeW = 280;
-  const barcodeH = 105;
+  const barcodeH = 140;
 
   ctx.fillStyle = (theme === 'midnight') ? '#fee101' : '#0b6839';
   let curX = barcodeX;
@@ -744,22 +744,22 @@ export async function renderBuilderCard(canvas, userImg, data = {}, options = {}
     curX += barW + 4;
   });
 
-  ctx.font = '700 16px "Victor Mono", monospace';
+  ctx.font = '700 17px "Victor Mono", monospace';
   ctx.textAlign = 'left';
-  ctx.fillText('AUTH: SHA-256//HHG-PASS-2026', barcodeX, barcodeY + barcodeH + 32);
-  ctx.font = '500 14px "Victor Mono", monospace';
+  ctx.fillText('AUTH: SHA-256//HHG-PASS-2026', barcodeX, barcodeY + barcodeH + 36);
+  ctx.font = '600 15px "Victor Mono", monospace';
   ctx.fillStyle = textDark;
-  ctx.fillText('VERIFY: DEVFL.IO/HHGOA26', barcodeX, barcodeY + barcodeH + 60);
+  ctx.fillText('VERIFY: DEVFL.IO/HHGOA26', barcodeX, barcodeY + barcodeH + 68);
 
   // Simulated QR Code in center
   const qrX = passX + 345;
-  const qrY = passY + 32;
-  const qrSize = 130;
+  const qrY = passY + 36;
+  const qrSize = 175;
   drawSimulatedQR(ctx, qrX, qrY, qrSize, (theme === 'midnight') ? '#fee101' : '#0b6839');
 
-  ctx.font = '700 13px "Victor Mono", monospace';
+  ctx.font = '700 14px "Victor Mono", monospace';
   ctx.textAlign = 'center';
-  ctx.fillText('SCAN BADGE', qrX + qrSize / 2, qrY + qrSize + 25);
+  ctx.fillText('SCAN BADGE', qrX + qrSize / 2, qrY + qrSize + 32);
 
   // Right side badges: #FrameInGoa & Devfolio
   const tagColX = passX + passW - 390;
@@ -767,30 +767,30 @@ export async function renderBuilderCard(canvas, userImg, data = {}, options = {}
   // #FrameInGoa badge
   ctx.fillStyle = accentPink;
   ctx.beginPath();
-  ctx.roundRect(tagColX, passY + 30, 360, 58, 29);
+  ctx.roundRect(tagColX, passY + 36, 360, 64, 32);
   ctx.fill();
 
   ctx.fillStyle = '#ffffff';
-  ctx.font = '800 26px "Victor Mono", monospace';
+  ctx.font = '800 28px "Victor Mono", monospace';
   ctx.textAlign = 'center';
-  ctx.fillText('#FrameInGoa', tagColX + 180, passY + 68);
+  ctx.fillText('#FrameInGoa', tagColX + 180, passY + 78);
 
   // Link & Rights info
   ctx.fillStyle = textDark;
-  ctx.font = '700 18px "Victor Mono", monospace';
-  ctx.fillText('HHGOA.COM · HACKER HOUSE', tagColX + 180, passY + 130);
+  ctx.font = '700 19px "Victor Mono", monospace';
+  ctx.fillText('HHGOA.COM · HACKER HOUSE', tagColX + 180, passY + 150);
+  ctx.font = '600 17px "Victor Mono", monospace';
+  ctx.fillText('GOA, INDIA · 28 – 31 OCT 2026', tagColX + 180, passY + 190);
   ctx.font = '600 16px "Victor Mono", monospace';
-  ctx.fillText('GOA, INDIA · 28 – 31 OCT 2026', tagColX + 180, passY + 165);
-  ctx.font = '600 15px "Victor Mono", monospace';
-  ctx.fillText('OFFICIAL RESIDENCY IDENTITY', tagColX + 180, passY + 198);
+  ctx.fillText('OFFICIAL RESIDENCY IDENTITY', tagColX + 180, passY + 228);
 
   ctx.restore();
 
-  // 9. BOTTOM RESIDENCY PLEDGE BAR (Fills the base of the card cleanly)
-  const pledgeY = passY + passH + 22;
+  // 9. BOTTOM RESIDENCY PLEDGE BAR (Fills the base of the card snugly)
+  const pledgeY = passY + passH + 25;
   const pledgeW = cardW - 90;
   const pledgeX = cardX + 45;
-  const pledgeH = 75;
+  const pledgeH = 80;
 
   ctx.save();
   ctx.fillStyle = (theme === 'midnight') ? '#081d11' : '#0b6839';
@@ -802,8 +802,8 @@ export async function renderBuilderCard(canvas, userImg, data = {}, options = {}
   ctx.stroke();
 
   ctx.fillStyle = accentYellow;
-  ctx.font = '800 19px "Victor Mono", monospace';
+  ctx.font = '800 20px "Victor Mono", monospace';
   ctx.textAlign = 'center';
-  ctx.fillText('✦ RESIDENCY ACCESS TIER-1 · OCEAN-FRONT HACK STATION · 2026 ✦', width / 2, pledgeY + 46);
+  ctx.fillText('✦ RESIDENCY ACCESS TIER-1 · OCEAN-FRONT HACK STATION · 2026 ✦', width / 2, pledgeY + 49);
   ctx.restore();
 }
