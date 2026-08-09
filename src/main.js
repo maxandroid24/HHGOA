@@ -167,6 +167,8 @@ function requestRender() {
 function setFormat(format) {
   state.currentFormat = format;
   if (format === 'pfp') {
+    document.body.classList.remove('format-b-active');
+    document.body.classList.add('format-a-active');
     tabFormatA.classList.add('active');
     tabFormatA.setAttribute('aria-selected', 'true');
     tabFormatB.classList.remove('active');
@@ -174,6 +176,8 @@ function setFormat(format) {
     formatAOptions.style.display = 'block';
     formatBOptions.style.display = 'none';
   } else {
+    document.body.classList.remove('format-a-active');
+    document.body.classList.add('format-b-active');
     tabFormatB.classList.add('active');
     tabFormatB.setAttribute('aria-selected', 'true');
     tabFormatA.classList.remove('active');

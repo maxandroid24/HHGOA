@@ -666,6 +666,109 @@ body {
 }
 
 /* -------------------------------------------------------------
+   FORMAT B COMPACT PADDING (Tightens height to match 4:5 preview)
+------------------------------------------------------------- */
+body.format-b-active .dropzone {
+  min-height: 125px;
+  padding: 16px 14px;
+}
+
+body.format-b-active .dropzone-svg-icon {
+  width: 38px;
+  height: 38px;
+  margin: 0 auto 6px;
+}
+
+body.format-b-active .dropzone-text {
+  font-size: 14px;
+}
+
+body.format-b-active .dropzone-sub {
+  font-size: 11px;
+  margin-top: 2px;
+}
+
+body.format-b-active .sample-avatars {
+  margin-top: 8px;
+  margin-bottom: 0;
+  gap: 6px;
+}
+
+body.format-b-active .sample-btn {
+  padding: 4px 10px;
+  font-size: 11px;
+}
+
+body.format-b-active .adjust-section {
+  margin-top: 10px;
+  padding-top: 10px;
+}
+
+body.format-b-active .section-label {
+  margin-bottom: 8px;
+  font-size: 11px;
+}
+
+body.format-b-active .control-row {
+  gap: 10px;
+  margin-bottom: 2px;
+}
+
+body.format-b-active .btn-mini {
+  padding: 4px 8px;
+  font-size: 11px;
+}
+
+body.format-b-active .options-group {
+  margin-top: 10px;
+  padding-top: 10px;
+}
+
+body.format-b-active .input-field-group {
+  margin-bottom: 8px;
+}
+
+body.format-b-active .input-label {
+  font-size: 11px;
+  margin-bottom: 3px;
+}
+
+body.format-b-active .text-input {
+  padding: 8px 12px;
+  font-size: 13px;
+  border-radius: 10px;
+}
+
+body.format-b-active .action-btn {
+  padding: 0 12px;
+  font-size: 12px;
+  border-radius: 10px;
+}
+
+body.format-b-active .role-chips {
+  gap: 5px;
+  margin-top: 5px;
+}
+
+body.format-b-active .role-chip {
+  padding: 3px 8px;
+  font-size: 11px;
+}
+
+body.format-b-active .pills-selector {
+  gap: 6px;
+}
+
+body.format-b-active .pill-option {
+  padding: 6px 12px;
+  font-size: 12px;
+}
+
+body.format-b-active .canvas-wrapper {
+  margin-bottom: 12px;
+}
+
+/* -------------------------------------------------------------
    PREVIEW CONTAINER & CANVAS
 ------------------------------------------------------------- */
 .preview-card {
