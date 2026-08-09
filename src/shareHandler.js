@@ -111,40 +111,67 @@ export async function shareToX(canvas, formatType = 'pfp', notify = () => {}, ca
   const tweetUrl = 'https://hhgoa.com';
   const fullTweetText = `${tweetCaption}\n\n${tweetUrl}`;
 
-  // Standard Web Intent URL for 𝕏
-  const webIntentUrl = `https://x.com/intent/tweet?text=${encodeURIComponent(tweetCaption)}&url=${encodeURIComponent(tweetUrl)}`;
+  // Standard Web Intent URL for 𝕏 (passes full text with link and hashtags in text param)
+  const webIntentUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(fullTweetText)}`;
 
   const mobile = isMobileDevice();
 
   if (mobile) {
     // ----------------------------------------------------
-    // MOBILE BEHAVIOR: Redirect to X app if available, else X website
+    // MOBILE BEHAVIOR: Launch X app with prefilled caption, fallback to browser
     // ----------------------------------------------------
     
-    // 1. Download image & copy to clipboard so mobile user has graphic ready
+    // 1. Download image so mobile user has graphic ready in Gallery
     try {
       await downloadCanvasImage(canvas, filename);
     } catch (e) {
       console.warn('Auto-download failed on mobile:', e);
     }
-    await copyCanvasToClipboard(canvas);
 
-    notify('Opening 𝕏! Image saved — attach it to your tweet.', 'success');
+    // 2. Also copy full tweet caption and/or image to clipboard as fallback
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(fullTweetText);
+      }
+    } catch (e) {
+      console.warn('Clipboard text copy failed on mobile:', e);
+    }
+
+    notify('Opening 𝕏! Image saved & caption ready.', 'success');
 
     if (isAndroid()) {
       // Android Chrome Intent syntax:
-      // Attempts to launch the official X (Twitter) Android app to the compose screen.
-      // If not installed, automatically falls back to browser_fallback_url (x.com intent).
-      const androidIntentUrl = `intent://post?message=${encodeURIComponent(fullTweetText)}#Intent;package=com.twitter.android;scheme=twitter;S.browser_fallback_url=${encodeURIComponent(webIntentUrl)};end`;
+      // Passes 'text', 'message', and 'S.android.intent.extra.TEXT' to guarantee
+      // that all versions of the X (Twitter) Android app receive the prefilled tweet text.
+      const encodedText = encodeURIComponent(fullTweetText);
+      const encodedFallback = encodeURIComponent(webIntentUrl);
+      const androidIntentUrl = `intent://post?text=${encodedText}&message=${encodedText}#Intent;package=com.twitter.android;scheme=twitter;action=android.intent.action.SEND;type=text/plain;S.android.intent.extra.TEXT=${encodedText};S.browser_fallback_url=${encodedFallback};end`;
+      
       window.location.href = androidIntentUrl;
       return;
     }
 
     if (isIOS()) {
-      // iOS Universal Link: https://x.com/intent/tweet
-      // When opened in Safari / iOS browsers, iOS opens the native X app if installed,
-      // or opens the web page on x.com in Safari if not installed without showing invalid address errors.
-      window.location.href = webIntentUrl;
+      // iOS: Try deep-link scheme first, fallback to Universal Link / Web Intent
+      const iosSchemeUrl = `twitter://post?text=${encodeURIComponent(fullTweetText)}`;
+      
+      // Fallback timer if X app is not installed
+      const start = Date.now();
+      const timer = setTimeout(() => {
+        if (Date.now() - start < 2500 && !document.hidden) {
+          window.location.href = webIntentUrl;
+        }
+      }, 1000);
+
+      const onVisibilityChange = () => {
+        if (document.hidden) {
+          clearTimeout(timer);
+          document.removeEventListener('visibilitychange', onVisibilityChange);
+        }
+      };
+      document.addEventListener('visibilitychange', onVisibilityChange);
+
+      window.location.href = iosSchemeUrl;
       return;
     }
 
