@@ -3,6 +3,7 @@ import { createDefaultAvatar, processUploadedFile, loadImageFromUrl } from './im
 import { renderPFPFrame, renderBuilderCard, preloadBrandAssets } from './frameRenderer.js';
 import { downloadCanvasImage, copyCanvasToClipboard, shareToX } from './shareHandler.js';
 import { generateRandomTitle, generateRandomBuilderId, ROLE_PRESETS } from './titleGenerator.js';
+import { createIcons, icons } from 'lucide';
 
 // Application State
 const state = {
@@ -385,7 +386,8 @@ async function init() {
     }
   });
 
-  // Initial render
+  // Initial render & Icon initialization
+  createIcons({ icons });
   requestRender();
 }
 

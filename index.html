@@ -30,10 +30,10 @@
     <header class="header-container">
       <div class="top-bar">
         <div class="studio-tag">
-          <span>⚡</span> 2:47 PM STUDIO
+          <i data-lucide="zap" class="ui-icon"></i> 2:47 PM STUDIO
         </div>
         <div class="event-dates-pill">
-          GOA, INDIA · 28 – 31 OCT 2026
+          <i data-lucide="calendar" class="ui-icon-sm"></i> GOA, INDIA · 28 – 31 OCT 2026
         </div>
       </div>
 
@@ -47,8 +47,8 @@
       </p>
 
       <div class="hero-tags">
-        <span class="hero-tag">✦ 247 BUILDERS RESIDENCY</span>
-        <span class="hero-tag">✦ #FrameInGoa</span>
+        <span class="hero-tag"><i data-lucide="sparkles" class="ui-icon-sm"></i> 247 BUILDERS RESIDENCY</span>
+        <span class="hero-tag"><i data-lucide="hash" class="ui-icon-sm"></i> #FrameInGoa</span>
       </div>
     </header>
 
@@ -56,10 +56,10 @@
     <div class="tabs-wrapper">
       <div class="format-tabs" role="tablist">
         <button id="tabFormatA" class="tab-btn active" role="tab" aria-selected="true">
-          <span>🖼️</span> Format A: PFP Frame / Overlay
+          <i data-lucide="image" class="ui-icon"></i> Format A: PFP Frame / Overlay
         </button>
         <button id="tabFormatB" class="tab-btn" role="tab" aria-selected="false">
-          <span>🪪</span> Format B: Builder ID Card
+          <i data-lucide="id-card" class="ui-icon"></i> Format B: Builder ID Card
         </button>
       </div>
     </div>
@@ -76,7 +76,7 @@
         <!-- Dropzone -->
         <div id="dropzone" class="dropzone">
           <input type="file" id="fileInput" class="hidden-file-input" accept="image/*,.heic,.heif" />
-          <span class="dropzone-icon">📸</span>
+          <i data-lucide="cloud-upload" class="dropzone-svg-icon"></i>
           <div class="dropzone-text">Click to choose or drag & drop photo</div>
           <div class="dropzone-sub">Supports iPhone HEIC, portrait, landscape, & square</div>
         </div>
@@ -84,21 +84,21 @@
         <!-- Sample Avatars -->
         <div class="sample-avatars">
           <span class="sample-label">Or try sample:</span>
-          <button id="btnSample1" class="sample-btn" type="button">🏖️ Retro Hacker</button>
-          <button id="btnSample2" class="sample-btn" type="button">🌴 Goa Sunset</button>
+          <button id="btnSample1" class="sample-btn" type="button"><i data-lucide="terminal" class="ui-icon-sm"></i> Retro Hacker</button>
+          <button id="btnSample2" class="sample-btn" type="button"><i data-lucide="palmtree" class="ui-icon-sm"></i> Goa Sunset</button>
         </div>
 
         <!-- Image Adjustments (Zoom / Pan / Rotate) -->
         <div class="adjust-section">
           <div class="section-label">
-            <span>Photo Adjustments</span>
-            <button id="btnResetTransform" class="btn-mini" type="button" title="Reset adjustments">↺ Reset</button>
+            <span><i data-lucide="sliders" class="ui-icon-sm"></i> Photo Adjustments</span>
+            <button id="btnResetTransform" class="btn-mini" type="button" title="Reset adjustments"><i data-lucide="rotate-ccw" class="ui-icon-sm"></i> Reset</button>
           </div>
 
           <div class="control-row">
-            <label class="control-label" for="zoomSlider">Zoom</label>
+            <label class="control-label" for="zoomSlider"><i data-lucide="zoom-in" class="ui-icon-sm"></i> Zoom</label>
             <input type="range" id="zoomSlider" class="slider-input" min="0.5" max="3" step="0.05" value="1" />
-            <button id="btnRotate" class="btn-mini" type="button" title="Rotate 90 degrees">↷ 90°</button>
+            <button id="btnRotate" class="btn-mini" type="button" title="Rotate 90 degrees"><i data-lucide="rotate-cw" class="ui-icon-sm"></i> 90°</button>
           </div>
         </div>
 
@@ -106,28 +106,28 @@
         <div id="formatAOptions" class="options-group">
           <div class="section-label">Frame Style</div>
           <div class="pills-selector" id="frameStyleSelector">
-            <button class="pill-option active" data-style="classic" type="button">🌴 Goa Classic</button>
-            <button class="pill-option" data-style="sunset" type="button">🌅 Tropical Sunset</button>
-            <button class="pill-option" data-style="terminal" type="button">💻 Hacker Terminal</button>
-            <button class="pill-option" data-style="sticker" type="button">🏷️ Retro Sticker</button>
+            <button class="pill-option active" data-style="classic" type="button"><i data-lucide="palmtree" class="ui-icon-sm"></i> Goa Classic</button>
+            <button class="pill-option" data-style="sunset" type="button"><i data-lucide="sunset" class="ui-icon-sm"></i> Tropical Sunset</button>
+            <button class="pill-option" data-style="terminal" type="button"><i data-lucide="terminal" class="ui-icon-sm"></i> Hacker Terminal</button>
+            <button class="pill-option" data-style="sticker" type="button"><i data-lucide="sparkles" class="ui-icon-sm"></i> Retro Sticker</button>
           </div>
 
           <div class="section-label">Cutout Shape</div>
           <div class="pills-selector" id="frameShapeSelector">
-            <button class="pill-option active" data-shape="circle" type="button">⭕ Circle (X Avatar)</button>
-            <button class="pill-option" data-shape="square" type="button">⬛ Rounded Square</button>
+            <button class="pill-option active" data-shape="circle" type="button"><i data-lucide="circle" class="ui-icon-sm"></i> Circle (𝕏 Avatar)</button>
+            <button class="pill-option" data-shape="square" type="button"><i data-lucide="square" class="ui-icon-sm"></i> Rounded Square</button>
           </div>
         </div>
 
         <!-- FORMAT B SPECIFIC OPTIONS (Builder ID Card) -->
         <div id="formatBOptions" class="options-group" style="display: none;">
           <div class="input-field-group">
-            <label class="input-label" for="inputName">Builder Name</label>
+            <label class="input-label" for="inputName"><i data-lucide="user" class="ui-icon-sm"></i> Builder Name</label>
             <input type="text" id="inputName" class="text-input" placeholder="John Doe" value="" maxlength="30" />
           </div>
 
           <div class="input-field-group">
-            <label class="input-label" for="inputRole">Primary Stack / Role</label>
+            <label class="input-label" for="inputRole"><i data-lucide="code" class="ui-icon-sm"></i> Primary Stack / Role</label>
             <input type="text" id="inputRole" class="text-input" placeholder="AI Research & Web3" value="" maxlength="35" />
             <div class="role-chips" id="roleChipsContainer">
               <!-- Preset chips populated via JS -->
@@ -135,20 +135,20 @@
           </div>
 
           <div class="input-field-group">
-            <label class="input-label" for="inputTitle">Generated Builder Title</label>
+            <label class="input-label" for="inputTitle"><i data-lucide="award" class="ui-icon-sm"></i> Generated Builder Title</label>
             <div class="input-with-action">
               <input type="text" id="inputTitle" class="text-input" value="Autonomous Alchemist" readonly />
               <button id="btnRerollTitle" class="action-btn" type="button" title="Generate a new title">
-                <span>🎲</span> Re-Roll
+                <i data-lucide="dices" class="ui-icon"></i> Re-Roll
               </button>
             </div>
           </div>
 
           <div class="section-label">Card Theme</div>
           <div class="pills-selector" id="cardThemeSelector">
-            <button class="pill-option active" data-theme="emerald" type="button">🌿 Emerald Goa</button>
-            <button class="pill-option" data-theme="sunset" type="button">🌺 Sunset Pink</button>
-            <button class="pill-option" data-theme="midnight" type="button">🌙 Midnight Beach</button>
+            <button class="pill-option active" data-theme="emerald" type="button"><i data-lucide="leaf" class="ui-icon-sm"></i> Emerald Goa</button>
+            <button class="pill-option" data-theme="sunset" type="button"><i data-lucide="flame" class="ui-icon-sm"></i> Sunset Pink</button>
+            <button class="pill-option" data-theme="midnight" type="button"><i data-lucide="moon" class="ui-icon-sm"></i> Midnight Beach</button>
           </div>
         </div>
       </section>
@@ -164,20 +164,21 @@
         <!-- Canvas Container -->
         <div class="canvas-wrapper" id="canvasWrapper">
           <canvas id="renderCanvas" width="1080" height="1080"></canvas>
-          <div class="drag-hint">🖐️ Drag photo to reposition</div>
+          <div class="drag-hint"><i data-lucide="move" class="ui-icon-sm"></i> Drag photo to reposition</div>
         </div>
 
         <!-- Action CTAs -->
         <div class="actions-container">
           <button id="btnDownload" class="btn-primary" type="button">
-            <span>📥</span> Download High-Res PNG
+            <i data-lucide="download" class="ui-icon-lg"></i> Download High-Res PNG
           </button>
           <div class="btn-group-secondary">
             <button id="btnShareX" class="btn-secondary" type="button">
-              <span>𝕏</span> Share to 𝕏 (#FrameInGoa)
+              <svg class="x-svg-icon" viewBox="0 0 24 24" width="16" height="16"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+              <span>Share to 𝕏 (#FrameInGoa)</span>
             </button>
             <button id="btnCopyClipboard" class="btn-outline" type="button">
-              <span>📋</span> Copy Image
+              <i data-lucide="copy" class="ui-icon"></i> Copy Image
             </button>
           </div>
         </div>
@@ -188,10 +189,10 @@
     <!-- Footer -->
     <footer class="footer-container">
       <div class="footer-links">
-        <a href="https://hhgoa.com" target="_blank" class="footer-link">Official Site (hhgoa.com)</a>
-        <a href="https://hacker-house-goa-2026.devfolio.co/" target="_blank" class="footer-link">Devfolio Application</a>
-        <a href="https://x.com/247pmstudio" target="_blank" class="footer-link">@247pmstudio</a>
-        <a href="https://t.me/twofourtysevenpm" target="_blank" class="footer-link">Telegram Community</a>
+        <a href="https://hhgoa.com" target="_blank" class="footer-link"><i data-lucide="globe" class="ui-icon-sm"></i> Official Site (hhgoa.com)</a>
+        <a href="https://hacker-house-goa-2026.devfolio.co/" target="_blank" class="footer-link"><i data-lucide="code-2" class="ui-icon-sm"></i> Devfolio Application</a>
+        <a href="https://x.com/247pmstudio" target="_blank" class="footer-link"><svg class="x-svg-icon" viewBox="0 0 24 24" width="13" height="13"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg> @247pmstudio</a>
+        <a href="https://t.me/twofourtysevenpm" target="_blank" class="footer-link"><i data-lucide="send" class="ui-icon-sm"></i> Telegram Community</a>
       </div>
       <p class="footer-copy">© 2026 HH-Goa · 2:47 PM Studio. All rights reserved.</p>
     </footer>

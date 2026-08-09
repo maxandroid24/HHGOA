@@ -132,22 +132,77 @@ body {
   opacity: 0.95;
 }
 
+/* -------------------------------------------------------------
+   ICON SYSTEM STYLING
+------------------------------------------------------------- */
+.lucide {
+  display: inline-block;
+  vertical-align: middle;
+  stroke-width: 2.25px;
+}
+
+.ui-icon {
+  width: 16px;
+  height: 16px;
+  margin-right: 6px;
+  flex-shrink: 0;
+}
+
+.ui-icon-sm {
+  width: 14px;
+  height: 14px;
+  margin-right: 5px;
+  flex-shrink: 0;
+}
+
+.ui-icon-lg {
+  width: 20px;
+  height: 20px;
+  margin-right: 8px;
+  flex-shrink: 0;
+}
+
+.dropzone-svg-icon {
+  width: 46px;
+  height: 46px;
+  stroke: var(--bg-forest);
+  margin: 0 auto 10px;
+  display: block;
+  transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.dropzone:hover .dropzone-svg-icon,
+.dropzone.dragover .dropzone-svg-icon {
+  stroke: var(--accent-pink);
+  transform: translateY(-4px) scale(1.1);
+}
+
+.x-svg-icon {
+  display: inline-block;
+  vertical-align: middle;
+  flex-shrink: 0;
+  fill: currentColor;
+}
+
 .hero-tags {
   display: flex;
   gap: 10px;
-  justify-content: center;
   flex-wrap: wrap;
-  margin-bottom: 24px;
+  justify-content: center;
+  margin-top: 8px;
 }
 
 .hero-tag {
-  background: rgba(0, 0, 0, 0.3);
+  background: rgba(0, 0, 0, 0.35);
   color: var(--accent-yellow);
+  font-family: var(--font-mono);
   font-size: 12px;
   font-weight: 700;
-  padding: 4px 12px;
-  border-radius: 8px;
+  padding: 6px 14px;
+  border-radius: 999px;
   border: 1px solid rgba(254, 225, 1, 0.4);
+  display: inline-flex;
+  align-items: center;
 }
 
 /* -------------------------------------------------------------
@@ -338,13 +393,15 @@ body {
   background: var(--bg-forest);
   color: var(--accent-yellow);
   border: none;
-  padding: 4px 10px;
+  padding: 6px 12px;
   border-radius: 999px;
   font-family: var(--font-mono);
   font-size: 11px;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: center;
 }
 
 .sample-btn:hover {
@@ -374,6 +431,11 @@ body {
   align-items: center;
 }
 
+.section-label span {
+  display: inline-flex;
+  align-items: center;
+}
+
 .control-row {
   display: flex;
   align-items: center;
@@ -384,8 +446,10 @@ body {
 .control-label {
   font-size: 12px;
   font-weight: 600;
-  width: 60px;
+  width: 70px;
   color: var(--text-dark);
+  display: inline-flex;
+  align-items: center;
 }
 
 .slider-input {
@@ -412,6 +476,8 @@ body {
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: center;
 }
 
 .btn-mini:hover {
@@ -446,6 +512,8 @@ body {
   border-radius: 999px;
   cursor: pointer;
   transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: center;
 }
 
 .pill-option.active {
@@ -464,7 +532,8 @@ body {
 }
 
 .input-label {
-  display: block;
+  display: inline-flex;
+  align-items: center;
   font-size: 12px;
   font-weight: 700;
   color: var(--bg-forest-dark);
@@ -604,6 +673,8 @@ body {
   border-radius: 999px;
   pointer-events: none;
   opacity: 0.85;
+  display: inline-flex;
+  align-items: center;
 }
 
 /* -------------------------------------------------------------
@@ -726,6 +797,8 @@ body {
   font-weight: 700;
   font-size: 14px;
   transition: color 0.15s ease;
+  display: inline-flex;
+  align-items: center;
 }
 
 .footer-link:hover {
