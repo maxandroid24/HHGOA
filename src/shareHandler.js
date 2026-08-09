@@ -121,23 +121,19 @@ export async function shareToX(canvas, formatType = 'pfp', notify = () => {}, ca
     // MOBILE BEHAVIOR: Launch X app with prefilled caption, fallback to browser
     // ----------------------------------------------------
     
-    // 1. Download image so mobile user has graphic ready in Gallery
+    // 1. Copy image to clipboard & download image so mobile user has graphic ready
+    const copied = await copyCanvasToClipboard(canvas);
     try {
       await downloadCanvasImage(canvas, filename);
     } catch (e) {
       console.warn('Auto-download failed on mobile:', e);
     }
 
-    // 2. Also copy full tweet caption and/or image to clipboard as fallback
-    try {
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        await navigator.clipboard.writeText(fullTweetText);
-      }
-    } catch (e) {
-      console.warn('Clipboard text copy failed on mobile:', e);
+    if (copied) {
+      notify('Opening 𝕏! Image copied to clipboard & saved to Photos.', 'success');
+    } else {
+      notify('Opening 𝕏! Image saved to Photos — attach to your tweet.', 'success');
     }
-
-    notify('Opening 𝕏! Image saved & caption ready.', 'success');
 
     if (isAndroid()) {
       // Android Chrome Intent syntax:
