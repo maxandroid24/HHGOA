@@ -661,11 +661,8 @@ body {
   box-shadow: var(--shadow-brutal-lg);
   border: 4px solid var(--bg-forest-dark);
   background: #000;
-  cursor: grab;
-}
-
-.canvas-wrapper:active {
-  cursor: grabbing;
+  cursor: default;
+  touch-action: none;
 }
 
 #renderCanvas {
@@ -674,6 +671,8 @@ body {
   height: auto;
   aspect-ratio: 1 / 1;
   transition: aspect-ratio 0.2s ease;
+  cursor: default;
+  touch-action: none;
 }
 
 #renderCanvas.card-aspect {

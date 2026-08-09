@@ -32,7 +32,70 @@ export async function preloadBrandAssets() {
 }
 
 /**
- * Draws the user's photo with zoom, pan, and rotation transformations
+ * Computes draw dimensions and bounds-clamped pan coordinates for user photo
+ * Ensures photo always covers target bounds and cannot be panned beyond image edges.
+ */
+export function computePhotoDrawParams(img, targetWidth, targetHeight, transform = {}) {
+  if (!img || !img.width || !img.height) {
+    return { drawW: targetWidth, drawH: targetHeight, effectiveW: targetWidth, effectiveH: targetHeight, maxPanX: 0, maxPanY: 0, panX: 0, panY: 0 };
+  }
+
+  const rotation = transform.rotation || 0;
+  const zoom = transform.zoom || 1.0;
+  const rawPanX = transform.panX || 0;
+  const rawPanY = transform.panY || 0;
+
+  const isRotated90 = (Math.abs(rotation % 180) === 90);
+  const imgAspect = img.width / img.height;
+  const targetAspect = targetWidth / targetHeight;
+
+  let drawW, drawH;
+  if (!isRotated90) {
+    if (imgAspect > targetAspect) {
+      drawH = targetHeight;
+      drawW = targetHeight * imgAspect;
+    } else {
+      drawW = targetWidth;
+      drawH = targetWidth / imgAspect;
+    }
+  } else {
+    // Rotated aspect ratio (1 / imgAspect)
+    const rotatedAspect = 1 / imgAspect;
+    if (rotatedAspect > targetAspect) {
+      drawW = targetHeight;
+      drawH = targetHeight * rotatedAspect;
+    } else {
+      drawH = targetWidth;
+      drawW = targetWidth / rotatedAspect;
+    }
+  }
+
+  drawW *= zoom;
+  drawH *= zoom;
+
+  const effectiveW = isRotated90 ? drawH : drawW;
+  const effectiveH = isRotated90 ? drawW : drawH;
+
+  const maxPanX = Math.max(0, (effectiveW - targetWidth) / 2);
+  const maxPanY = Math.max(0, (effectiveH - targetHeight) / 2);
+
+  const panX = Math.max(-maxPanX, Math.min(maxPanX, rawPanX));
+  const panY = Math.max(-maxPanY, Math.min(maxPanY, rawPanY));
+
+  return {
+    drawW,
+    drawH,
+    effectiveW,
+    effectiveH,
+    maxPanX,
+    maxPanY,
+    panX,
+    panY
+  };
+}
+
+/**
+ * Draws the user's photo with zoom, clamped pan, and rotation transformations
  */
 function drawUserPhoto(ctx, img, targetX, targetY, targetWidth, targetHeight, transform) {
   if (!img) return;
@@ -43,34 +106,19 @@ function drawUserPhoto(ctx, img, targetX, targetY, targetWidth, targetHeight, tr
   ctx.rect(targetX, targetY, targetWidth, targetHeight);
   ctx.clip();
 
+  const params = computePhotoDrawParams(img, targetWidth, targetHeight, transform);
+
   const centerX = targetX + targetWidth / 2;
   const centerY = targetY + targetHeight / 2;
 
-  // Move to center of target
-  ctx.translate(centerX + (transform.panX || 0), centerY + (transform.panY || 0));
+  // Move to center of target with bounds-clamped pan
+  ctx.translate(centerX + params.panX, centerY + params.panY);
 
   if (transform.rotation) {
     ctx.rotate((transform.rotation * Math.PI) / 180);
   }
 
-  // Calculate cover aspect ratio
-  const imgAspect = img.width / img.height;
-  const targetAspect = targetWidth / targetHeight;
-
-  let drawW, drawH;
-  if (imgAspect > targetAspect) {
-    drawH = targetHeight;
-    drawW = targetHeight * imgAspect;
-  } else {
-    drawW = targetWidth;
-    drawH = targetWidth / imgAspect;
-  }
-
-  const zoom = transform.zoom || 1.0;
-  drawW *= zoom;
-  drawH *= zoom;
-
-  ctx.drawImage(img, -drawW / 2, -drawH / 2, drawW, drawH);
+  ctx.drawImage(img, -params.drawW / 2, -params.drawH / 2, params.drawW, params.drawH);
   ctx.restore();
 }
 

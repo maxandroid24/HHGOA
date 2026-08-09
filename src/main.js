@@ -1,6 +1,6 @@
 import './style.css';
 import { createDefaultAvatar, processUploadedFile, loadImageFromUrl } from './imageProcessor.js';
-import { renderPFPFrame, renderBuilderCard, preloadBrandAssets } from './frameRenderer.js';
+import { renderPFPFrame, renderBuilderCard, preloadBrandAssets, computePhotoDrawParams } from './frameRenderer.js';
 import { downloadCanvasImage, copyCanvasToClipboard, shareToX } from './shareHandler.js';
 import { generateRandomTitle, generateRandomBuilderId, ROLE_PRESETS } from './titleGenerator.js';
 import { createIcons, icons } from 'lucide';
@@ -56,6 +56,66 @@ const btnDownload = document.getElementById('btnDownload');
 const btnShareX = document.getElementById('btnShareX');
 const btnCopyClipboard = document.getElementById('btnCopyClipboard');
 const toastContainer = document.getElementById('toastContainer');
+
+/**
+ * Returns the active photo cutout bounds in canvas coordinate space
+ */
+function getActiveCutoutBounds() {
+  if (state.currentFormat === 'pfp') {
+    return {
+      x: 185,
+      y: 135,
+      width: 710,
+      height: 710,
+      cx: 540,
+      cy: 490,
+      radius: 355,
+      shape: state.pfpOptions.shape || 'circle'
+    };
+  } else {
+    return {
+      x: 85,
+      y: 241,
+      width: 430,
+      height: 430,
+      cx: 300,
+      cy: 456,
+      radius: 215,
+      shape: 'square'
+    };
+  }
+}
+
+/**
+ * Checks if a point (canvasX, canvasY) is inside the active cutout
+ */
+function isCoordInCutout(canvasX, canvasY) {
+  const b = getActiveCutoutBounds();
+  if (b.shape === 'circle') {
+    const distSq = (canvasX - b.cx) ** 2 + (canvasY - b.cy) ** 2;
+    return distSq <= b.radius ** 2;
+  }
+  return canvasX >= b.x &&
+         canvasX <= (b.x + b.width) &&
+         canvasY >= b.y &&
+         canvasY <= (b.y + b.height);
+}
+
+/**
+ * Strictly clamps current transform.panX and panY within image bounds
+ */
+function clampCurrentPan() {
+  if (!state.userImage) return;
+  const bounds = getActiveCutoutBounds();
+  const params = computePhotoDrawParams(
+    state.userImage,
+    bounds.width,
+    bounds.height,
+    state.transform
+  );
+  state.transform.panX = params.panX;
+  state.transform.panY = params.panY;
+}
 
 /**
  * Toast Notification Utility
@@ -121,6 +181,7 @@ function setFormat(format) {
     formatAOptions.style.display = 'none';
     formatBOptions.style.display = 'block';
   }
+  clampCurrentPan();
   requestRender();
 }
 
@@ -156,6 +217,7 @@ async function handleFile(file) {
     state.transform.zoom = 1.0;
     state.transform.rotation = 0;
     zoomSlider.value = 1;
+    clampCurrentPan();
     showToast('Photo loaded successfully! 🎉', 'success');
     requestRender();
   } catch (err) {
@@ -164,47 +226,84 @@ async function handleFile(file) {
 }
 
 /**
- * Drag & Pan on Canvas
+ * Drag & Pan on Canvas — Restricted strictly to image cutout area & clamped to photo bounds
  */
 function setupCanvasDrag() {
-  const getCoords = (e) => {
+  const getEventCanvasCoords = (e) => {
+    const rect = canvas.getBoundingClientRect();
+    let clientX, clientY;
     if (e.touches && e.touches.length > 0) {
-      return { x: e.touches[0].clientX, y: e.touches[0].clientY };
+      clientX = e.touches[0].clientX;
+      clientY = e.touches[0].clientY;
+    } else {
+      clientX = e.clientX;
+      clientY = e.clientY;
     }
-    return { x: e.clientX, y: e.clientY };
+    const canvasX = ((clientX - rect.left) / rect.width) * canvas.width;
+    const canvasY = ((clientY - rect.top) / rect.height) * canvas.height;
+    return { clientX, clientY, canvasX, canvasY, rect };
   };
 
   const onStart = (e) => {
+    const coords = getEventCanvasCoords(e);
+    // Only allow drag initiation strictly within the image cutout area
+    if (!isCoordInCutout(coords.canvasX, coords.canvasY)) {
+      return;
+    }
     state.isDragging = true;
-    state.dragStart = getCoords(e);
+    state.dragStart = { x: coords.clientX, y: coords.clientY };
+    canvas.style.cursor = 'grabbing';
+    if (e.cancelable && e.type.startsWith('touch')) {
+      e.preventDefault();
+    }
   };
 
   const onMove = (e) => {
-    if (!state.isDragging) return;
-    const current = getCoords(e);
-    const dx = current.x - state.dragStart.x;
-    const dy = current.y - state.dragStart.y;
-    state.dragStart = current;
+    const coords = getEventCanvasCoords(e);
 
-    // Scale delta relative to 1080px canvas display
-    const rect = canvas.getBoundingClientRect();
-    const scale = 1080 / rect.width;
+    if (!state.isDragging) {
+      // Update hover cursor based on whether mouse is over the active photo cutout
+      if (isCoordInCutout(coords.canvasX, coords.canvasY)) {
+        canvas.style.cursor = 'grab';
+      } else {
+        canvas.style.cursor = 'default';
+      }
+      return;
+    }
 
-    state.transform.panX += dx * scale;
-    state.transform.panY += dy * scale;
+    if (e.cancelable && e.type.startsWith('touch')) {
+      e.preventDefault();
+    }
+
+    const dx = coords.clientX - state.dragStart.x;
+    const dy = coords.clientY - state.dragStart.y;
+    state.dragStart = { x: coords.clientX, y: coords.clientY };
+
+    // Scale delta relative to canvas pixel dimensions
+    const scaleX = canvas.width / coords.rect.width;
+    const scaleY = canvas.height / coords.rect.height;
+
+    state.transform.panX += dx * scaleX;
+    state.transform.panY += dy * scaleY;
+
+    // Strictly clamp pan coordinates to image bounds
+    clampCurrentPan();
     requestRender();
   };
 
   const onEnd = () => {
-    state.isDragging = false;
+    if (state.isDragging) {
+      state.isDragging = false;
+      canvas.style.cursor = 'default';
+    }
   };
 
-  canvasWrapper.addEventListener('mousedown', onStart);
+  canvas.addEventListener('mousedown', onStart);
   window.addEventListener('mousemove', onMove);
   window.addEventListener('mouseup', onEnd);
 
-  canvasWrapper.addEventListener('touchstart', onStart, { passive: true });
-  window.addEventListener('touchmove', onMove, { passive: true });
+  canvas.addEventListener('touchstart', onStart, { passive: false });
+  window.addEventListener('touchmove', onMove, { passive: false });
   window.addEventListener('touchend', onEnd);
 }
 
@@ -290,11 +389,13 @@ async function init() {
   // Adjustments
   zoomSlider.addEventListener('input', (e) => {
     state.transform.zoom = parseFloat(e.target.value);
+    clampCurrentPan();
     requestRender();
   });
 
   btnRotate.addEventListener('click', () => {
     state.transform.rotation = (state.transform.rotation + 90) % 360;
+    clampCurrentPan();
     requestRender();
   });
 
@@ -304,6 +405,7 @@ async function init() {
     state.transform.panY = 0;
     state.transform.rotation = 0;
     zoomSlider.value = 1;
+    clampCurrentPan();
     requestRender();
   });
 
@@ -325,6 +427,7 @@ async function init() {
       shapeButtons.forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       state.pfpOptions.shape = btn.getAttribute('data-shape');
+      clampCurrentPan();
       requestRender();
     });
   });
@@ -379,10 +482,9 @@ async function init() {
   btnCopyClipboard.addEventListener('click', async () => {
     const success = await copyCanvasToClipboard(canvas);
     if (success) {
-      showToast('Copied graphic to clipboard! (Ctrl+V to paste)', 'success');
+      showToast('Copied graphic to clipboard! (Ctrl+V to paste) 📋', 'success');
     } else {
-      showToast('Clipboard access unavailable, downloading instead...', 'info');
-      downloadCanvasImage(canvas, 'hh-goa-2026-graphic.png');
+      showToast('Clipboard permission is required to copy the image.', 'warn');
     }
   });
 

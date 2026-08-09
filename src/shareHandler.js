@@ -78,8 +78,9 @@ export async function copyCanvasToClipboard(canvas) {
 
 /**
  * Share graphic to X (Twitter)
- * - Desktop: Copies image to clipboard + downloads PNG + redirects to x.com/intent/tweet with prefilled caption & link
- * - Mobile: Launches X App via Deep Link/Intent with fallback to mobile browser x.com web intent + downloads PNG
+ * - Checks and requests clipboard image permission
+ * - If permitted (or previously allowed): copies image to clipboard and fires native App deep-links / Web Intent
+ * - If not permitted: stops execution and alerts user that clipboard permission is required
  *
  * @param {HTMLCanvasElement} canvas
  * @param {string} formatType 'pfp' | 'card'
@@ -87,6 +88,35 @@ export async function copyCanvasToClipboard(canvas) {
  * @param {object} [cardData]
  */
 export async function shareToX(canvas, formatType = 'pfp', notify = () => {}, cardData = {}) {
+  // 1. Check if clipboard write is supported
+  if (!navigator.clipboard || !window.ClipboardItem) {
+    notify('Clipboard permission is required to share the image. Your browser does not support clipboard image copying.', 'warn');
+    return;
+  }
+
+  // 2. Check existing permission status if supported by browser
+  if (navigator.permissions && navigator.permissions.query) {
+    try {
+      const perm = await navigator.permissions.query({ name: 'clipboard-write' });
+      if (perm && perm.state === 'denied') {
+        notify('Clipboard permission is blocked in your browser settings. Please allow clipboard access to share.', 'warn');
+        return;
+      }
+    } catch (e) {
+      // clipboard-write query is not supported in some browsers, proceed to write attempt
+    }
+  }
+
+  // 3. Attempt to copy image to clipboard (prompts user if not yet permitted, or directly succeeds if already permitted)
+  const copied = await copyCanvasToClipboard(canvas);
+  if (!copied) {
+    notify('Clipboard permission is required to copy and share the image to 𝕏. Please allow clipboard access.', 'warn');
+    return; // DO NOT fire intents or open X if permission is denied/not granted!
+  }
+
+  // 4. Permission was granted / already allowed! Now fire intents / deep links / web intent
+  notify('Image copied to clipboard! Opening 𝕏...', 'success');
+
   const filename = formatType === 'pfp' 
     ? 'hh-goa-2026-pfp-frame.png' 
     : 'hh-goa-2026-builder-id.png';
@@ -117,21 +147,8 @@ export async function shareToX(canvas, formatType = 'pfp', notify = () => {}, ca
   const mobile = isMobileDevice();
 
   if (mobile) {
-    // ----------------------------------------------------
-    // MOBILE BEHAVIOR: Launch X app with prefilled caption, fallback to browser
-    // ----------------------------------------------------
-    
-    // Copy image in background without blocking synchronous user gesture activation
-    copyCanvasToClipboard(canvas)
-      .then(copied => {
-        if (copied) notify('Opening 𝕏! Image copied to clipboard.', 'success');
-      })
-      .catch(() => {});
-
-    notify('Opening 𝕏...', 'info');
-
     if (isAndroid()) {
-      // Android Chrome Intent syntax (synchronous user action):
+      // Android Chrome Intent syntax:
       // Launches com.twitter.android if installed, falls back to webIntentUrl if not.
       const encodedText = encodeURIComponent(fullTweetText);
       const encodedFallback = encodeURIComponent(webIntentUrl);
@@ -142,7 +159,7 @@ export async function shareToX(canvas, formatType = 'pfp', notify = () => {}, ca
     }
 
     if (isIOS()) {
-      // iOS: Launch native X app via scheme synchronously
+      // iOS: Launch native X app via scheme
       const iosSchemeUrl = `twitter://post?text=${encodeURIComponent(fullTweetText)}`;
       
       // Fallback timer if X app is not installed
@@ -172,18 +189,8 @@ export async function shareToX(canvas, formatType = 'pfp', notify = () => {}, ca
 
   // ------------------------------------------------------
   // DESKTOP BEHAVIOR:
-  // Do NOT trigger navigator.share (which opens Windows Share sheet).
-  // Directly copy to clipboard and open x.com tweet composer.
-  // ------------------------------------------------------
-  const copied = await copyCanvasToClipboard(canvas);
-
-  if (copied) {
-    notify('Opening 𝕏! Image copied — paste (Ctrl+V) into your tweet.', 'success');
-  } else {
-    notify('Opening 𝕏!', 'info');
-  }
-
   // Open X Web Intent in a new tab/window
+  // ------------------------------------------------------
   window.open(webIntentUrl, '_blank', 'noopener,noreferrer');
 }
 
