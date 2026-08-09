@@ -208,7 +208,7 @@ body {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 32px;
-  align-items: start;
+  align-items: stretch;
 }
 
 @media (max-width: 960px) {
@@ -228,6 +228,9 @@ body {
   box-shadow: var(--shadow-brutal);
   border: var(--border-brutal);
   position: relative;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .pushpin {
@@ -255,14 +258,16 @@ body {
   font-size: 32px;
   font-weight: 900;
   color: var(--bg-forest-dark);
-  margin-bottom: 6px;
+  margin-bottom: 16px;
   line-height: 1;
+  text-align: center;
 }
 
 .card-desc {
   font-size: 13px;
   color: var(--text-dark-muted);
   margin-bottom: 20px;
+  text-align: center;
 }
 
 /* -------------------------------------------------------------
@@ -550,8 +555,11 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  position: sticky;
-  top: 24px;
+  text-align: center;
+}
+
+.preview-card .card-title {
+  width: 100%;
 }
 
 .canvas-wrapper {
@@ -606,6 +614,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  margin-top: auto;
 }
 
 .btn-primary {
