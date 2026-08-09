@@ -121,29 +121,28 @@ export async function shareToX(canvas, formatType = 'pfp', notify = () => {}, ca
     // MOBILE BEHAVIOR: Launch X app with prefilled caption, fallback to browser
     // ----------------------------------------------------
     
-    // Copy image to clipboard so mobile user can paste graphic
-    const copied = await copyCanvasToClipboard(canvas);
+    // Copy image in background without blocking synchronous user gesture activation
+    copyCanvasToClipboard(canvas)
+      .then(copied => {
+        if (copied) notify('Opening 𝕏! Image copied to clipboard.', 'success');
+      })
+      .catch(() => {});
 
-    if (copied) {
-      notify('Opening 𝕏! Image copied to clipboard.', 'success');
-    } else {
-      notify('Opening 𝕏!', 'info');
-    }
+    notify('Opening 𝕏...', 'info');
 
     if (isAndroid()) {
-      // Android Chrome Intent syntax:
-      // Passes 'text', 'message', and 'S.android.intent.extra.TEXT' to guarantee
-      // that all versions of the X (Twitter) Android app receive the prefilled tweet text.
+      // Android Chrome Intent syntax (synchronous user action):
+      // Launches com.twitter.android if installed, falls back to webIntentUrl if not.
       const encodedText = encodeURIComponent(fullTweetText);
       const encodedFallback = encodeURIComponent(webIntentUrl);
-      const androidIntentUrl = `intent://post?text=${encodedText}&message=${encodedText}#Intent;package=com.twitter.android;scheme=twitter;action=android.intent.action.SEND;type=text/plain;S.android.intent.extra.TEXT=${encodedText};S.browser_fallback_url=${encodedFallback};end`;
+      const androidIntentUrl = `intent://post?text=${encodedText}#Intent;package=com.twitter.android;scheme=twitter;S.browser_fallback_url=${encodedFallback};end`;
       
       window.location.href = androidIntentUrl;
       return;
     }
 
     if (isIOS()) {
-      // iOS: Try deep-link scheme first, fallback to Universal Link / Web Intent
+      // iOS: Launch native X app via scheme synchronously
       const iosSchemeUrl = `twitter://post?text=${encodeURIComponent(fullTweetText)}`;
       
       // Fallback timer if X app is not installed
@@ -152,7 +151,7 @@ export async function shareToX(canvas, formatType = 'pfp', notify = () => {}, ca
         if (Date.now() - start < 2500 && !document.hidden) {
           window.location.href = webIntentUrl;
         }
-      }, 1000);
+      }, 1200);
 
       const onVisibilityChange = () => {
         if (document.hidden) {
