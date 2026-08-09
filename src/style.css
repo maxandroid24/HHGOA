@@ -759,10 +759,10 @@ body {
   color: var(--accent-yellow);
   border: 3px solid var(--accent-yellow);
   border-radius: 999px;
-  padding: 12px 18px;
+  padding: 13px 18px;
   font-family: var(--font-mono);
   font-size: 14px;
-  font-weight: 700;
+  font-weight: 800;
   cursor: pointer;
   box-shadow: var(--shadow-brutal-sm);
   transition: all 0.15s ease;
@@ -770,12 +770,18 @@ body {
   align-items: center;
   justify-content: center;
   gap: 8px;
+  user-select: none;
 }
 
 .btn-secondary:hover {
   background: #1a1a1a;
-  transform: translate(-1px, -1px);
-  box-shadow: 5px 6px 0px rgba(0,0,0,0.4);
+  transform: translate(-2px, -2px);
+  box-shadow: 5px 6px 0px rgba(0, 0, 0, 0.4);
+}
+
+.btn-secondary:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 2px 0px rgba(0, 0, 0, 0.3);
 }
 
 .btn-outline {
@@ -783,22 +789,30 @@ body {
   color: var(--bg-forest);
   border: 3px solid var(--bg-forest);
   border-radius: 999px;
-  padding: 12px 18px;
+  padding: 13px 18px;
   font-family: var(--font-mono);
-  font-size: 13px;
-  font-weight: 700;
+  font-size: 14px;
+  font-weight: 800;
   cursor: pointer;
   box-shadow: var(--shadow-brutal-sm);
   transition: all 0.15s ease;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 8px;
+  user-select: none;
 }
 
 .btn-outline:hover {
   background: var(--bg-forest);
   color: var(--accent-yellow);
+  transform: translate(-2px, -2px);
+  box-shadow: 5px 6px 0px rgba(0, 0, 0, 0.4);
+}
+
+.btn-outline:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 2px 0px rgba(0, 0, 0, 0.3);
 }
 
 

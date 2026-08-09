@@ -486,10 +486,21 @@ async function init() {
   });
 
   btnCopyClipboard.addEventListener('click', async () => {
-    const success = await copyCanvasToClipboard(canvas);
-    if (success) {
-      showToast('Copied graphic to clipboard! (Ctrl+V to paste) 📋', 'success');
-    } else {
+    const originalHtml = btnCopyClipboard.innerHTML;
+    try {
+      const success = await copyCanvasToClipboard(canvas);
+      if (success) {
+        btnCopyClipboard.innerHTML = '<i data-lucide="check" class="ui-icon"></i> Copied!';
+        createIcons({ icons });
+        showToast('Image copied to clipboard! (Ctrl+V to paste) 📋', 'success');
+        setTimeout(() => {
+          btnCopyClipboard.innerHTML = originalHtml;
+          createIcons({ icons });
+        }, 1800);
+      } else {
+        showToast('Clipboard permission is required to copy the image.', 'warn');
+      }
+    } catch (err) {
       showToast('Clipboard permission is required to copy the image.', 'warn');
     }
   });
