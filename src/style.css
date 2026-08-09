@@ -330,6 +330,12 @@ body {
   text-align: center;
 }
 
+.controls-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
 /* -------------------------------------------------------------
    UPLOAD DROPZONE
 ------------------------------------------------------------- */
@@ -343,6 +349,11 @@ body {
   transition: all 0.2s ease;
   position: relative;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 125px;
 }
 
 .dropzone:hover, .dropzone.dragover {
@@ -384,7 +395,7 @@ body {
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-top: 14px;
+  margin-top: 12px;
   flex-wrap: wrap;
 }
 
@@ -398,7 +409,7 @@ body {
   background: var(--bg-forest);
   color: var(--accent-yellow);
   border: none;
-  padding: 6px 12px;
+  padding: 5px 12px;
   border-radius: 999px;
   font-family: var(--font-mono);
   font-size: 11px;
@@ -419,7 +430,7 @@ body {
    IMAGE ADJUSTMENT CONTROLS
 ------------------------------------------------------------- */
 .adjust-section {
-  margin-top: 20px;
+  margin-top: auto;
   padding-top: 16px;
   border-top: 2px dashed rgba(11, 104, 57, 0.2);
 }
@@ -430,7 +441,7 @@ body {
   text-transform: uppercase;
   letter-spacing: 0.5px;
   color: var(--bg-forest);
-  margin-bottom: 12px;
+  margin-bottom: 10px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -445,7 +456,7 @@ body {
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-bottom: 10px;
+  margin-bottom: 6px;
 }
 
 .control-label {
@@ -477,7 +488,7 @@ body {
   font-family: var(--font-mono);
   font-size: 12px;
   font-weight: 700;
-  padding: 6px 12px;
+  padding: 5px 10px;
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.15s ease;
@@ -494,7 +505,7 @@ body {
    FORMAT CUSTOMIZATION FORMS
 ------------------------------------------------------------- */
 .options-group {
-  margin-top: 20px;
+  margin-top: auto;
   padding-top: 16px;
   border-top: 2px dashed rgba(11, 104, 57, 0.2);
 }
@@ -503,7 +514,11 @@ body {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
-  margin-bottom: 14px;
+  margin-bottom: 12px;
+}
+
+.pills-selector:last-child {
+  margin-bottom: 0;
 }
 
 .pill-option {
@@ -513,7 +528,7 @@ body {
   font-family: var(--font-mono);
   font-size: 12px;
   font-weight: 700;
-  padding: 8px 14px;
+  padding: 7px 12px;
   border-radius: 999px;
   cursor: pointer;
   transition: all 0.15s ease;
@@ -533,7 +548,7 @@ body {
 
 /* Form Inputs */
 .input-field-group {
-  margin-bottom: 14px;
+  margin-bottom: 10px;
 }
 
 .input-label {
@@ -542,7 +557,7 @@ body {
   font-size: 12px;
   font-weight: 700;
   color: var(--bg-forest-dark);
-  margin-bottom: 6px;
+  margin-bottom: 4px;
 }
 
 .text-input {
