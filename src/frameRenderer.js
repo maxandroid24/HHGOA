@@ -625,15 +625,15 @@ export async function renderBuilderCard(canvas, userImg, data = {}, options = {}
   ctx.textAlign = 'left';
   ctx.fillText('BUILDER / COHORT 2026', infoX, infoY + 20);
 
-  // Big Builder Name
+  // Big Builder Name (Auto-scales font size to fit up to 29 characters)
   ctx.fillStyle = textDark;
-  ctx.font = '900 42px "Imbue", "Outfit", serif';
-  
-  let displayName = name;
-  if (displayName.length > 18) {
-    displayName = displayName.substring(0, 16) + '...';
+  let nameFontSize = 42;
+  ctx.font = `900 ${nameFontSize}px "Imbue", "Outfit", serif`;
+  while (ctx.measureText(name).width > infoW - 10 && nameFontSize > 20) {
+    nameFontSize -= 1;
+    ctx.font = `900 ${nameFontSize}px "Imbue", "Outfit", serif`;
   }
-  ctx.fillText(displayName, infoX, infoY + 68);
+  ctx.fillText(name, infoX, infoY + 68);
 
   // Divider
   ctx.strokeStyle = (theme === 'midnight') ? 'rgba(255,255,255,0.2)' : 'rgba(11, 104, 57, 0.2)';
@@ -656,8 +656,13 @@ export async function renderBuilderCard(canvas, userImg, data = {}, options = {}
   ctx.fill();
 
   ctx.fillStyle = '#fee101';
-  ctx.font = '700 20px "Victor Mono", monospace';
-  ctx.fillText(role.length > 24 ? role.substring(0, 22) + '...' : role, infoX + 16, infoY + 169);
+  let roleFontSize = 19;
+  ctx.font = `700 ${roleFontSize}px "Victor Mono", monospace`;
+  while (ctx.measureText(role).width > infoW - 32 && roleFontSize > 12) {
+    roleFontSize -= 1;
+    ctx.font = `700 ${roleFontSize}px "Victor Mono", monospace`;
+  }
+  ctx.fillText(role, infoX + 16, infoY + 169);
 
   // Label: GENERATED BUILDER CLASS
   ctx.fillStyle = accentPink;
@@ -675,8 +680,14 @@ export async function renderBuilderCard(canvas, userImg, data = {}, options = {}
   ctx.stroke();
 
   ctx.fillStyle = '#0b6839';
-  ctx.font = '900 22px "Victor Mono", monospace';
-  ctx.fillText(`✦ ${title} ✦`, infoX + 16, infoY + 275);
+  const titleDisplay = `✦ ${title} ✦`;
+  let titleFontSize = 21;
+  ctx.font = `900 ${titleFontSize}px "Victor Mono", monospace`;
+  while (ctx.measureText(titleDisplay).width > infoW - 32 && titleFontSize > 12) {
+    titleFontSize -= 1;
+    ctx.font = `900 ${titleFontSize}px "Victor Mono", monospace`;
+  }
+  ctx.fillText(titleDisplay, infoX + 16, infoY + 275);
 
   // Stat counters row
   const statBoxY = infoY + 328;
