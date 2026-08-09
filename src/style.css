@@ -361,7 +361,7 @@ body {
   border: 3px dashed var(--bg-forest);
   background: rgba(11, 104, 57, 0.05);
   border-radius: 18px;
-  padding: 38px 20px;
+  padding: 46px 24px;
   text-align: center;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -371,7 +371,7 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 220px;
+  min-height: 270px;
 }
 
 .dropzone:hover, .dropzone.dragover {
@@ -381,14 +381,14 @@ body {
 }
 
 .dropzone-icon {
-  font-size: 48px;
-  margin-bottom: 10px;
+  font-size: 52px;
+  margin-bottom: 12px;
   display: block;
 }
 
 .dropzone-text {
   font-weight: 700;
-  font-size: 16px;
+  font-size: 17px;
   color: var(--bg-forest-dark);
 }
 
@@ -412,14 +412,14 @@ body {
 .sample-avatars {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-top: 14px;
+  gap: 10px;
+  margin-top: 16px;
   margin-bottom: 2px;
   flex-wrap: wrap;
 }
 
 .sample-label {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   color: var(--text-dark-muted);
 }
@@ -428,15 +428,16 @@ body {
   background: var(--bg-forest);
   color: var(--accent-yellow);
   border: none;
-  padding: 5px 12px;
+  padding: 6px 14px;
   border-radius: 999px;
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.15s ease;
   display: inline-flex;
   align-items: center;
+  gap: 6px;
 }
 
 .sample-btn:hover {
@@ -449,8 +450,8 @@ body {
    IMAGE ADJUSTMENT CONTROLS
 ------------------------------------------------------------- */
 .adjust-section {
-  margin-top: 16px;
-  padding-top: 14px;
+  margin-top: 24px;
+  padding-top: 20px;
   border-top: 2px dashed rgba(11, 104, 57, 0.2);
 }
 
@@ -460,7 +461,7 @@ body {
   text-transform: uppercase;
   letter-spacing: 0.5px;
   color: var(--bg-forest);
-  margin-bottom: 10px;
+  margin-bottom: 14px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -469,12 +470,13 @@ body {
 .section-label span {
   display: inline-flex;
   align-items: center;
+  gap: 6px;
 }
 
 .control-row {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
   margin-bottom: 6px;
 }
 
@@ -485,6 +487,7 @@ body {
   color: var(--text-dark);
   display: inline-flex;
   align-items: center;
+  gap: 6px;
 }
 
 .slider-input {
@@ -507,12 +510,13 @@ body {
   font-family: var(--font-mono);
   font-size: 12px;
   font-weight: 700;
-  padding: 5px 10px;
+  padding: 6px 12px;
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.15s ease;
   display: inline-flex;
   align-items: center;
+  gap: 6px;
 }
 
 .btn-mini:hover {
@@ -524,20 +528,23 @@ body {
    FORMAT CUSTOMIZATION FORMS
 ------------------------------------------------------------- */
 .options-group {
-  margin-top: 16px;
-  padding-top: 14px;
+  margin-top: 24px;
+  padding-top: 20px;
   border-top: 2px dashed rgba(11, 104, 57, 0.2);
+}
+
+.option-subgroup {
+  margin-bottom: 22px;
+}
+
+.option-subgroup:last-child {
+  margin-bottom: 0;
 }
 
 .pills-selector {
   display: flex;
-  gap: 8px;
+  gap: 10px;
   flex-wrap: wrap;
-  margin-bottom: 12px;
-}
-
-.pills-selector:last-child {
-  margin-bottom: 0;
 }
 
 .pill-option {
@@ -545,20 +552,21 @@ body {
   border: 2px solid var(--bg-forest);
   color: var(--bg-forest);
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 700;
-  padding: 7px 12px;
+  padding: 8px 14px;
   border-radius: 999px;
   cursor: pointer;
   transition: all 0.15s ease;
   display: inline-flex;
   align-items: center;
+  gap: 8px;
 }
 
 .pill-option.active {
   background: var(--bg-forest);
   color: var(--accent-yellow);
-  box-shadow: 2px 3px 0 rgba(0,0,0,0.2);
+  box-shadow: 2px 3px 0 rgba(0,0,0,0.25);
 }
 
 .pill-option:hover:not(.active) {
@@ -567,16 +575,17 @@ body {
 
 /* Form Inputs */
 .input-field-group {
-  margin-bottom: 10px;
+  margin-bottom: 20px;
 }
 
 .input-label {
   display: inline-flex;
   align-items: center;
+  gap: 6px;
   font-size: 12px;
   font-weight: 700;
   color: var(--bg-forest-dark);
-  margin-bottom: 4px;
+  margin-bottom: 8px;
 }
 
 .text-input {
@@ -584,7 +593,7 @@ body {
   background: #ffffff;
   border: 2px solid var(--bg-forest);
   border-radius: 12px;
-  padding: 10px 14px;
+  padding: 12px 16px;
   font-family: var(--font-mono);
   font-size: 14px;
   font-weight: 600;
@@ -608,7 +617,7 @@ body {
   color: #fff;
   border: 2px solid #000;
   border-radius: 12px;
-  padding: 0 14px;
+  padding: 0 16px;
   font-family: var(--font-mono);
   font-size: 13px;
   font-weight: 700;
@@ -635,17 +644,17 @@ body {
 .role-chips {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
-  margin-top: 8px;
+  gap: 8px;
+  margin-top: 10px;
 }
 
 .role-chip {
   background: rgba(11, 104, 57, 0.08);
   border: 1px solid rgba(11, 104, 57, 0.25);
   color: var(--bg-forest-dark);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
-  padding: 4px 8px;
+  padding: 5px 10px;
   border-radius: 6px;
   cursor: pointer;
   transition: all 0.1s ease;
