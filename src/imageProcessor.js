@@ -64,18 +64,111 @@ export function createDefaultAvatar() {
 }
 
 /**
+ * Helper to load a Blob/File into an HTMLImageElement via object URL
+ * @param {Blob|File} blob
+ * @returns {Promise<HTMLImageElement>}
+ */
+function loadImageFromBlob(blob) {
+  return new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(blob);
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      resolve(img);
+    };
+    img.onerror = (err) => {
+      URL.revokeObjectURL(url);
+      reject(err);
+    };
+    img.src = url;
+  });
+}
+
+/**
+ * Downscales an HTMLImageElement if it exceeds maximum dimensions (2560px)
+ * Prevents Mobile Safari GPU memory limits and canvas texture crashes.
+ * @param {HTMLImageElement} img
+ * @param {number} [maxDim=2560]
+ * @returns {Promise<HTMLImageElement>}
+ */
+function downscaleImageIfNeeded(img, maxDim = 2560) {
+  if (!img || (img.width <= maxDim && img.height <= maxDim)) {
+    return Promise.resolve(img);
+  }
+
+  return new Promise((resolve) => {
+    try {
+      const canvas = document.createElement('canvas');
+      let width = img.width;
+      let height = img.height;
+
+      if (width > height) {
+        if (width > maxDim) {
+          height = Math.round((height * maxDim) / width);
+          width = maxDim;
+        }
+      } else {
+        if (height > maxDim) {
+          width = Math.round((width * maxDim) / height);
+          height = maxDim;
+        }
+      }
+
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext('2d');
+      if (ctx) {
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
+        ctx.drawImage(img, 0, 0, width, height);
+
+        const downscaledImg = new Image();
+        downscaledImg.crossOrigin = 'anonymous';
+        downscaledImg.onload = () => resolve(downscaledImg);
+        downscaledImg.onerror = () => resolve(img);
+        downscaledImg.src = canvas.toDataURL('image/jpeg', 0.92);
+        return;
+      }
+    } catch (err) {
+      console.warn('Image downscaling warning:', err);
+    }
+    resolve(img);
+  });
+}
+
+/**
  * Loads a File into an HTMLImageElement
- * Converts HEIC/HEIF to JPEG lazily if necessary
+ * Supports native decoding (iOS Safari 17+, Chrome, Firefox),
+ * HEIC fallback conversion via heic2any, and automatic mobile downscaling.
  * @param {File} file
  * @param {(progress: string) => void} onStatus
  * @returns {Promise<HTMLImageElement>}
  */
 export async function processUploadedFile(file, onStatus = () => {}) {
-  let blob = file;
-  const isHeic = file.name.toLowerCase().endsWith('.heic') || 
-                file.name.toLowerCase().endsWith('.heif') ||
-                file.type === 'image/heic' || 
-                file.type === 'image/heif';
+  onStatus('Loading photo...');
+
+  // 1. Attempt native browser decoding via object URL
+  // iOS Safari 17+, macOS, Chrome & Android natively decode HEIC, JPG, PNG, WEBP, GIF
+  try {
+    const nativeImg = await loadImageFromBlob(file);
+    if (nativeImg && nativeImg.width > 0 && nativeImg.height > 0) {
+      onStatus('Processing photo...');
+      return await downscaleImageIfNeeded(nativeImg, 2560);
+    }
+  } catch (nativeErr) {
+    console.warn('Native image decoding failed, checking for HEIC fallback conversion:', nativeErr);
+  }
+
+  // 2. If native decoding failed, check if file is HEIC/HEIF
+  const fileName = (file.name || '').toLowerCase();
+  const fileType = (file.type || '').toLowerCase();
+  const isHeic = fileName.endsWith('.heic') || 
+                fileName.endsWith('.heif') ||
+                fileType.includes('heic') || 
+                fileType.includes('heif');
+
+  let processedBlob = file;
 
   if (isHeic) {
     onStatus('Converting iPhone HEIC image...');
@@ -87,25 +180,39 @@ export async function processUploadedFile(file, onStatus = () => {}) {
         toType: 'image/jpeg',
         quality: 0.92
       });
-      blob = Array.isArray(converted) ? converted[0] : converted;
-    } catch (err) {
-      console.error('HEIC conversion failed:', err);
+      processedBlob = Array.isArray(converted) ? converted[0] : converted;
+    } catch (heicErr) {
+      console.error('HEIC conversion failed:', heicErr);
       throw new Error('Failed to convert iPhone HEIC photo. Please try a JPG or PNG.');
     }
   }
 
-  onStatus('Loading photo...');
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const img = new Image();
-      img.onload = () => resolve(img);
-      img.onerror = () => reject(new Error('Invalid image file format.'));
-      img.src = e.target.result;
-    };
-    reader.onerror = () => reject(new Error('Failed to read file from disk.'));
-    reader.readAsDataURL(blob);
-  });
+  // 3. Load the converted blob into an Image
+  try {
+    const loadedImg = await loadImageFromBlob(processedBlob);
+    onStatus('Processing photo...');
+    return await downscaleImageIfNeeded(loadedImg, 2560);
+  } catch (err) {
+    // 4. Last resort fallback: FileReader readAsDataURL
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        const fallbackImg = new Image();
+        fallbackImg.onload = async () => {
+          try {
+            const finalImg = await downscaleImageIfNeeded(fallbackImg, 2560);
+            resolve(finalImg);
+          } catch (e) {
+            resolve(fallbackImg);
+          }
+        };
+        fallbackImg.onerror = () => reject(new Error('Invalid image file format.'));
+        fallbackImg.src = e.target.result;
+      };
+      reader.onerror = () => reject(new Error('Failed to read file from disk.'));
+      reader.readAsDataURL(processedBlob);
+    });
+  }
 }
 
 /**

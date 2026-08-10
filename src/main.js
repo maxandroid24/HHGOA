@@ -255,6 +255,8 @@ async function handleFile(file) {
     requestRender();
   } catch (err) {
     showToast(err.message || 'Failed to load photo.', 'warn');
+  } finally {
+    if (fileInput) fileInput.value = '';
   }
 }
 
@@ -364,8 +366,15 @@ async function init() {
   tabFormatB.addEventListener('click', () => setFormat('card'));
 
   // Dropzone Events
-  dropzone.addEventListener('click', () => fileInput.click());
-  fileInput.addEventListener('change', (e) => handleFile(e.target.files[0]));
+  dropzone.addEventListener('click', () => {
+    fileInput.value = '';
+    fileInput.click();
+  });
+  fileInput.addEventListener('change', (e) => {
+    if (e.target.files && e.target.files[0]) {
+      handleFile(e.target.files[0]);
+    }
+  });
 
   ['dragenter', 'dragover'].forEach(name => {
     dropzone.addEventListener(name, (e) => {

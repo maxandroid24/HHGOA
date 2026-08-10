@@ -36,8 +36,29 @@ export function isIOS() {
  */
 export async function downloadCanvasImage(canvas, filename = 'hh-goa-2026-graphic.png') {
   return new Promise((resolve, reject) => {
-    canvas.toBlob((blob) => {
+    canvas.toBlob(async (blob) => {
       if (!blob) return reject(new Error('Failed to generate image file.'));
+
+      // iOS Mobile Safari does not natively trigger file downloads via standard <a> links.
+      // Use native Web Share API if available so iPhone users can tap "Save Image" directly to Camera Roll.
+      if (isIOS() && navigator.canShare) {
+        try {
+          const file = new File([blob], filename, { type: 'image/png' });
+          if (navigator.canShare({ files: [file] })) {
+            await navigator.share({
+              files: [file],
+              title: 'Hacker House Goa 2026'
+            });
+            return resolve(true);
+          }
+        } catch (shareErr) {
+          if (shareErr.name === 'AbortError') {
+            return resolve(true);
+          }
+        }
+      }
+
+      // Standard browser download trigger
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
@@ -45,7 +66,7 @@ export async function downloadCanvasImage(canvas, filename = 'hh-goa-2026-graphi
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
-      setTimeout(() => URL.revokeObjectURL(url), 2000);
+      setTimeout(() => URL.revokeObjectURL(url), 3000);
       resolve(true);
     }, 'image/png', 1.0);
   });
@@ -94,8 +115,8 @@ export async function shareToX(canvas, formatType = 'pfp', notify = () => {}, ca
     return;
   }
 
-  // 2. Check existing permission status if supported by browser
-  if (navigator.permissions && navigator.permissions.query) {
+  // 2. Check existing permission status if supported by browser (safely ignore WebKit/iOS enum errors)
+  if (navigator.permissions && typeof navigator.permissions.query === 'function') {
     try {
       const perm = await navigator.permissions.query({ name: 'clipboard-write' });
       if (perm && perm.state === 'denied') {
@@ -103,7 +124,7 @@ export async function shareToX(canvas, formatType = 'pfp', notify = () => {}, ca
         return;
       }
     } catch (e) {
-      // clipboard-write query is not supported in some browsers, proceed to write attempt
+      // 'clipboard-write' permission query throws TypeError on iOS Safari / WebKit, safely proceed
     }
   }
 
