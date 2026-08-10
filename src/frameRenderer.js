@@ -1,7 +1,7 @@
-// High-Resolution Canvas Rendering Engine for HH Goa 2026
-// Renders 1080x1080 PFP Frames and 1080x1350 Builder ID Cards
-
+import QRCode from 'qrcode';
 import { loadImageFromUrl } from './imageProcessor.js';
+
+export const QR_TARGET_URL = 'https://hhgoa.navneetkhar24.workers.dev/';
 
 // Cache brand assets
 const assets = {
@@ -123,45 +123,39 @@ function drawUserPhoto(ctx, img, targetX, targetY, targetWidth, targetHeight, tr
 }
 
 /**
- * Draws simulated QR code graphic
+ * Draws a real scannable QR code encoding the target URL
  */
-function drawSimulatedQR(ctx, x, y, size, color) {
-  ctx.save();
-  ctx.fillStyle = color;
-  const cells = 8;
-  const cellSize = size / cells;
+function drawQRCode(ctx, text, x, y, size, darkColor, lightColor = null) {
+  try {
+    const qr = QRCode.create(text, { errorCorrectionLevel: 'M' });
+    const numCells = qr.modules.size;
+    const margin = 1;
+    const totalCells = numCells + margin * 2;
+    const cellSize = size / totalCells;
 
-  // Finder corners
-  const drawFinder = (fx, fy) => {
-    ctx.fillRect(fx, fy, cellSize * 3, cellSize * 3);
-    ctx.clearRect(fx + cellSize * 0.5, fy + cellSize * 0.5, cellSize * 2, cellSize * 2);
-    ctx.fillRect(fx + cellSize, fy + cellSize, cellSize, cellSize);
-  };
-
-  drawFinder(x, y);
-  drawFinder(x + size - cellSize * 3, y);
-  drawFinder(x, y + size - cellSize * 3);
-
-  // Random data pattern
-  const pattern = [
-    [0,0,0,0,1,0,0,0],
-    [0,0,0,0,0,1,0,0],
-    [0,0,0,0,1,1,0,0],
-    [1,0,1,0,0,1,1,1],
-    [0,1,0,1,1,0,1,0],
-    [0,0,0,0,1,0,0,1],
-    [0,0,0,0,0,1,1,0],
-    [0,0,0,1,0,1,0,1]
-  ];
-
-  for (let r = 0; r < cells; r++) {
-    for (let c = 0; c < cells; c++) {
-      if (pattern[r][c] === 1) {
-        ctx.fillRect(x + c * cellSize, y + r * cellSize, cellSize - 1, cellSize - 1);
+    ctx.save();
+    if (lightColor) {
+      ctx.fillStyle = lightColor;
+      ctx.beginPath();
+      ctx.roundRect(x, y, size, size, 10);
+      ctx.fill();
+    }
+    ctx.fillStyle = darkColor;
+    for (let r = 0; r < numCells; r++) {
+      for (let c = 0; c < numCells; c++) {
+        if (qr.modules.get(r, c)) {
+          const cellX = Math.round(x + (c + margin) * cellSize);
+          const cellY = Math.round(y + (r + margin) * cellSize);
+          const cellW = Math.round(x + (c + margin + 1) * cellSize) - cellX;
+          const cellH = Math.round(y + (r + margin + 1) * cellSize) - cellY;
+          ctx.fillRect(cellX, cellY, cellW, cellH);
+        }
       }
     }
+    ctx.restore();
+  } catch (err) {
+    console.error('Error drawing QR code:', err);
   }
-  ctx.restore();
 }
 
 // -------------------------------------------------------------
@@ -762,14 +756,30 @@ export async function renderBuilderCard(canvas, userImg, data = {}, options = {}
   ctx.fillStyle = textDark;
   ctx.fillText('VERIFY: DEVFL.IO/HHGOA26', barcodeX, barcodeY + barcodeH + 68);
 
-  // Simulated QR Code in center
+  // Real Scannable QR Code in center (points to https://hhgoa.navneetkhar24.workers.dev/)
   const qrX = passX + 345;
   const qrY = passY + 36;
   const qrSize = 175;
-  drawSimulatedQR(ctx, qrX, qrY, qrSize, (theme === 'midnight') ? '#fee101' : '#0b6839');
+
+  let qrDarkColor = '#0b6839';
+  let qrLightColor = '#fffbe8';
+
+  if (theme === 'midnight') {
+    qrDarkColor = '#081d11';
+    qrLightColor = '#fee101';
+  } else if (theme === 'sunset') {
+    qrDarkColor = '#2a0014';
+    qrLightColor = '#fffbe8';
+  } else {
+    qrDarkColor = '#0b6839';
+    qrLightColor = '#fffbe8';
+  }
+
+  drawQRCode(ctx, QR_TARGET_URL, qrX, qrY, qrSize, qrDarkColor, qrLightColor);
 
   ctx.font = '700 14px "Victor Mono", monospace';
   ctx.textAlign = 'center';
+  ctx.fillStyle = (theme === 'midnight') ? '#fee101' : textDark;
   ctx.fillText('SCAN BADGE', qrX + qrSize / 2, qrY + qrSize + 32);
 
   // Right side badges: #FrameInGoa & Devfolio
