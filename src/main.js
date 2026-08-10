@@ -266,11 +266,13 @@ function setupCanvasDrag() {
     const coords = getEventCanvasCoords(e);
 
     if (!state.isDragging) {
-      // Update hover cursor based on whether mouse is over the active photo cutout
+      // Update hover cursor and touchAction based on whether pointer is over the active photo cutout
       if (isCoordInCutout(coords.canvasX, coords.canvasY)) {
         canvas.style.cursor = 'grab';
+        canvas.style.touchAction = 'none';
       } else {
         canvas.style.cursor = 'default';
+        canvas.style.touchAction = 'pan-y';
       }
       return;
     }
@@ -299,6 +301,7 @@ function setupCanvasDrag() {
     if (state.isDragging) {
       state.isDragging = false;
       canvas.style.cursor = 'default';
+      canvas.style.touchAction = 'pan-y';
     }
   };
 
