@@ -3,6 +3,7 @@ import { createDefaultAvatar, processUploadedFile, loadImageFromUrl } from './im
 import { renderPFPFrame, renderBuilderCard, preloadBrandAssets, computePhotoDrawParams } from './frameRenderer.js';
 import { downloadCanvasImage, copyCanvasToClipboard, shareToX } from './shareHandler.js';
 import { generateRandomTitle, generateRandomBuilderId, ROLE_PRESETS } from './titleGenerator.js';
+import { getMuteState, toggleMute, playRandomHypeTrack } from './audioManager.js';
 import { createIcons, icons } from 'lucide';
 
 // Application State
@@ -56,6 +57,9 @@ const btnDownload = document.getElementById('btnDownload');
 const btnShareX = document.getElementById('btnShareX');
 const btnCopyClipboard = document.getElementById('btnCopyClipboard');
 const toastContainer = document.getElementById('toastContainer');
+const btnSoundToggle = document.getElementById('btnSoundToggle');
+const soundIcon = document.getElementById('soundIcon');
+const soundLabel = document.getElementById('soundLabel');
 
 /**
  * Returns the active photo cutout bounds in canvas coordinate space
@@ -115,6 +119,30 @@ function clampCurrentPan() {
   );
   state.transform.panX = params.panX;
   state.transform.panY = params.panY;
+}
+
+/**
+ * Update Sticky Sound Toggle Button UI
+ */
+function updateSoundButtonUI(isMuted, isPlaying = false) {
+  if (!btnSoundToggle) return;
+  if (isMuted) {
+    btnSoundToggle.classList.add('muted');
+    btnSoundToggle.classList.remove('playing');
+    btnSoundToggle.title = 'Sound Muted — Click to unmute';
+    if (soundIcon) soundIcon.setAttribute('data-lucide', 'volume-x');
+  } else {
+    btnSoundToggle.classList.remove('muted');
+    if (isPlaying) {
+      btnSoundToggle.classList.add('playing');
+      btnSoundToggle.title = 'Playing 🎵 (Click to mute)';
+    } else {
+      btnSoundToggle.classList.remove('playing');
+      btnSoundToggle.title = 'Sound ON (Click to mute)';
+    }
+    if (soundIcon) soundIcon.setAttribute('data-lucide', 'volume-2');
+  }
+  createIcons({ icons });
 }
 
 /**
@@ -223,6 +251,7 @@ async function handleFile(file) {
     zoomSlider.value = 1;
     clampCurrentPan();
     showToast('Photo loaded successfully! 🎉', 'success');
+    playRandomHypeTrack((msg, type) => showToast(msg, type));
     requestRender();
   } catch (err) {
     showToast(err.message || 'Failed to load photo.', 'warn');
@@ -364,6 +393,7 @@ async function init() {
     state.transform = { zoom: 1, panX: 0, panY: 0, rotation: 0 };
     zoomSlider.value = 1;
     showToast('Loaded Retro Hacker avatar', 'info');
+    playRandomHypeTrack((msg, type) => showToast(msg, type));
     requestRender();
   });
 
@@ -390,6 +420,7 @@ async function init() {
     state.transform = { zoom: 1, panX: 0, panY: 0, rotation: 0 };
     zoomSlider.value = 1;
     showToast('Loaded Sunset avatar', 'info');
+    playRandomHypeTrack((msg, type) => showToast(msg, type));
     requestRender();
   });
 
@@ -514,8 +545,29 @@ async function init() {
 
   // Initial render & Icon initialization
   createIcons({ icons });
+
+  // Initialize Sticky Sound Toggle Button
+  if (btnSoundToggle) {
+    updateSoundButtonUI(getMuteState());
+    btnSoundToggle.addEventListener('click', () => {
+      const isMuted = toggleMute();
+      updateSoundButtonUI(isMuted);
+      showToast(isMuted ? '🔇 Sound muted' : '🔊 Sound enabled! Hype drops will play on photo upload 🎵', 'info');
+    });
+  }
+
+  window.addEventListener('soundplaybackchanged', (e) => {
+    const isPlaying = e.detail?.isPlaying || false;
+    updateSoundButtonUI(getMuteState(), isPlaying);
+  });
+
+  // Render initial preview
   requestRender();
 }
 
-// Start app when DOM is ready
-window.addEventListener('DOMContentLoaded', init);
+// Start application
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', init);
+} else {
+  init();
+}
